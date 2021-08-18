@@ -40,7 +40,7 @@ if (fs.existsSync(CONFIG_FILE_PATH)) {
 
 async function main () {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--window-size=375,667']
+    args: ['--no-sandbox']
   })
   Logger.success('浏览器启动成功！')
   const page = await browser.newPage()
