@@ -74,8 +74,6 @@ async function main () {
       await page.waitForTimeout(500)
       const confirmResult = await page.evaluate((geo_api_info) => {
         // eslint-disable-next-line no-undef
-        vm.hasFlag = 0
-        // eslint-disable-next-line no-undef
         vm.locatComplete(geo_api_info)
         // eslint-disable-next-line no-undef
         vm.confirm()
