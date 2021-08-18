@@ -1,12 +1,9 @@
-const fs = require('fs-extra')
 const puppeteer = require('puppeteer')
+const { Logger } = require('./logger')
+
+const { MAX_ATTEMPTS, ATTEMPTS_INTERVAL, REPORT_PAGE_URL } = require('../env')
+
 const {
-  CONFIG_FILE_PATH,
-  MAX_ATTEMPTS,
-  ATTEMPTS_INTERVAL
-} = require('./env')
-const {
-  Logger,
   getLocationHref,
   getConfirmResult,
   getSaveResult,
@@ -19,35 +16,26 @@ const {
   waitForSaveDone
 } = require('./util')
 
-Logger.info('程序启动！')
-
-const config = { username: '', password: '' }
-let currentAttempts = 0
-
-if (fs.existsSync(CONFIG_FILE_PATH)) {
-  const { username, password } = require(CONFIG_FILE_PATH)
-  if (username && password) {
-    Logger.success('配置文件加载成功！')
-    config.username = username
-    config.password = password
-    main()
-  } else {
-    Logger.error('加载配置文件 config.json 失败！')
-  }
-} else {
-  Logger.error('未找到配置文件 config.json！')
-}
-
-async function main () {
+const startPPTR = async () => {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox']
   })
   Logger.success('浏览器启动成功！')
   const page = await browser.newPage()
   await page.emulate(puppeteer.devices['iPhone 6'])
+  return { page, browser }
+}
+
+const exit = async (browser) => {
+  Logger.info('程序执行完毕，退出！')
+  await browser.close()
+}
+
+const bootstrap = async (config) => {
+  let currentAttempts = 0
+  const { page, browser } = await startPPTR()
   try {
-    const reportPageUrl = 'https://onewechat.bnu.edu.cn/ncov/wap/default/index'
-    await page.goto(reportPageUrl)
+    await page.goto(REPORT_PAGE_URL)
     await waitForLoginPage(page)
     Logger.success('登录页加载成功！')
     const loginPageUrl = await getLocationHref(page)
@@ -59,6 +47,7 @@ async function main () {
     if (loginResult.error) {
       Logger.error('登录失败！提示信息为：')
       Logger.info(loginResult.message)
+      await Logger.screenshot(page, 'LoginError')
       await exit(browser)
       return
     }
@@ -71,6 +60,7 @@ async function main () {
     if (confirmResult.error) {
       Logger.error('数据校验失败！提示信息为：')
       Logger.info(confirmResult.message)
+      await Logger.screenshot(page, 'ConfirmError')
       await exit(browser)
       return
     }
@@ -84,21 +74,22 @@ async function main () {
     if (saveResult.error) {
       Logger.error('数据提交失败！提示信息为：')
       Logger.info(saveResult.message)
+      await Logger.screenshot(page, 'SaveError')
       await exit(browser)
       return
     }
 
     Logger.success('数据提交成功！提示信息为：')
     Logger.info(saveResult.message)
-
     await Logger.screenshot(page, 'Success')
+    await exit(browser)
   } catch (error) {
     if (error.name === 'TimeoutError') {
       if (currentAttempts < MAX_ATTEMPTS) {
         currentAttempts++
         Logger.warn(`操作超时，稍后将重试第 ${currentAttempts} 次……`)
         await page.waitForTimeout(ATTEMPTS_INTERVAL)
-        main()
+        bootstrap()
       } else {
         Logger.error('操作超时，且已达最大重试次数！')
         Logger.log(error)
@@ -110,9 +101,6 @@ async function main () {
       await Logger.screenshot(page, 'RuntimeError')
     }
   }
-  await exit(browser)
 }
-async function exit (browser) {
-  Logger.info('程序执行完毕，退出！')
-  await browser.close()
-}
+
+exports.bootstrap = bootstrap

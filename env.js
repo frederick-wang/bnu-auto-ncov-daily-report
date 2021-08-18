@@ -9,6 +9,8 @@ const LOG_FILE_PATH = path.resolve(LOG_PATH, `Log-${new Date().getTime()}.txt`)
 const MAX_ATTEMPTS = 3
 const ATTEMPTS_INTERVAL = 60 * 1000
 
+const REPORT_PAGE_URL = 'https://onewechat.bnu.edu.cn/ncov/wap/default/index'
+
 fs.ensureDirSync(SCREENSHOT_PATH)
 fs.ensureDirSync(LOG_PATH)
 
@@ -18,3 +20,4 @@ exports.SCREENSHOT_PATH = SCREENSHOT_PATH
 exports.LOG_FILE_PATH = LOG_FILE_PATH
 exports.MAX_ATTEMPTS = MAX_ATTEMPTS
 exports.ATTEMPTS_INTERVAL = ATTEMPTS_INTERVAL
+exports.REPORT_PAGE_URL = REPORT_PAGE_URL
