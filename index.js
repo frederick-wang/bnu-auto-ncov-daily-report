@@ -41,9 +41,11 @@ async function main () {
     }, config.username, config.password)
     await new Promise((resolve, reject) => {
       try {
-        page.waitForSelector('.item-buydate.form-detail2').then(() => {
+        // 如果登录成功，页面就会开始跳转。
+        page.waitForNavigation({ waitUntil: ['load'] }).then(() => {
           resolve(true)
         })
+        // 如果登录失败，会在当前页面弹出错误提示。
         page.waitForSelector('#wapat').then(() => {
           resolve(true)
         })
@@ -73,7 +75,6 @@ async function main () {
       console.log(chalk.green('登录成功！'))
       await page.waitForSelector('.item-buydate.form-detail2')
       console.log(chalk.green('打卡页加载成功！'))
-      await page.waitForTimeout(500)
       const confirmResult = await page.evaluate((geo_api_info) => {
         // eslint-disable-next-line no-undef
         vm.locatComplete(geo_api_info)
