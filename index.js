@@ -1,140 +1,103 @@
-const fs = require('fs')
-const path = require('path')
-const chalk = require('chalk')
+const fs = require('fs-extra')
 const puppeteer = require('puppeteer')
+const {
+  CONFIG_FILE_PATH,
+  MAX_ATTEMPTS
+} = require('./env')
+const {
+  Logger,
+  getLocationHref,
+  getConfirmResult,
+  getSaveResult,
+  clickSaveButton,
+  login,
+  getLoginResult,
+  waitForLoginPage,
+  waitForloggingIn,
+  waitForIndexPage,
+  waitForSaveDone
+} = require('./util')
+
+Logger.info('程序启动！')
 
 const config = { username: '', password: '' }
-const CONFIG_PATH = path.resolve(__dirname, './config.json')
+let currentAttempts = 0
 
-if (fs.existsSync(CONFIG_PATH)) {
-  const { username, password } = require(CONFIG_PATH)
+if (fs.existsSync(CONFIG_FILE_PATH)) {
+  const { username, password } = require(CONFIG_FILE_PATH)
   if (username && password) {
-    console.log(chalk.green('配置文件加载成功！'))
+    Logger.success('配置文件加载成功！')
     config.username = username
     config.password = password
     main()
   } else {
-    console.log(chalk.red('加载配置文件 config.json 失败！'))
+    Logger.error('加载配置文件 config.json 失败！')
   }
 } else {
-  console.log(chalk.red('未找到配置文件 config.json！'))
+  Logger.error('未找到配置文件 config.json！')
 }
 
 async function main () {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox']
+    args: ['--no-sandbox', '--window-size=375,667']
   })
-  console.log(chalk.green('浏览器启动成功！'))
+  Logger.success('浏览器启动成功！')
+  const page = await browser.newPage()
+  await page.emulate(puppeteer.devices['iPhone 6'])
   try {
-    const page = await browser.newPage()
     const reportPageUrl = 'https://onewechat.bnu.edu.cn/ncov/wap/default/index'
     await page.goto(reportPageUrl)
-    console.log(chalk.green('登录页加载成功！'))
-    await page.evaluate((username, password) => {
-      // eslint-disable-next-line no-undef
-      vm.$data.username = username
-      // eslint-disable-next-line no-undef
-      vm.$data.password = password
-      // eslint-disable-next-line no-undef
-      vm.login()
-    }, config.username, config.password)
-    await new Promise((resolve, reject) => {
-      try {
-        // 如果登录成功，页面就会开始跳转。
-        page.waitForNavigation({ waitUntil: ['load'] }).then(() => {
-          resolve(true)
-        })
-        // 如果登录失败，会在当前页面弹出错误提示。
-        page.waitForSelector('#wapat').then(() => {
-          resolve(true)
-        })
-      } catch (error) {
-        reject(error)
-      }
-    })
-    const loginResult = await page.evaluate(() => {
-      // eslint-disable-next-line no-undef
-      if ($('.wapat-title').length && !$('.wapat-title').is(':hidden')) {
-        return {
-          error: true,
-          // eslint-disable-next-line no-undef
-          message: $('.wapat-title').text()
-        }
-      } else {
-        return {
-          error: false,
-          message: ''
-        }
-      }
-    })
+    await waitForLoginPage(page)
+    Logger.success('登录页加载成功！')
+    const loginPageUrl = await getLocationHref(page)
+    Logger.info(`登录页地址为:`, loginPageUrl)
+    await login(page, config.username, config.password)
+    await waitForloggingIn(page)
+    const loginResult = await getLoginResult(page)
     if (loginResult.error) {
-      console.log(chalk.red('登录失败！提示信息为：'))
-      console.log(`「${chalk.blue(loginResult.message)}」`)
+      Logger.error('登录失败！提示信息为：')
+      Logger.info(loginResult.message)
     } else {
-      console.log(chalk.green('登录成功！'))
-      await page.waitForSelector('.item-buydate.form-detail2')
-      console.log(chalk.green('打卡页加载成功！'))
-      const confirmResult = await page.evaluate(() => {
-        // eslint-disable-next-line no-undef
-        vm.locatComplete(JSON.parse(vm.oldInfo.geo_api_info))
-        // eslint-disable-next-line no-undef
-        vm.confirm()
-        // eslint-disable-next-line no-undef
-        if ($('.wapcf-title').length && !$('.wapcf-title').is(':hidden')) {
-          // 已经弹出了确认窗口
-          return {
-            error: false,
-            // eslint-disable-next-line no-undef
-            message: $('.wapcf-title').text()
-          }
-        } else {
-          // 弹出了报错窗口
-          return {
-            error: true,
-            // eslint-disable-next-line no-undef
-            message: $('.wapat-title').text()
-          }
-        }
-      })
+      Logger.success('登录成功！')
+      await waitForIndexPage(page)
+      Logger.success('打卡页加载成功！')
+      const confirmResult = await getConfirmResult(page)
       if (confirmResult.error) {
-        console.log(chalk.red('数据校验失败！提示信息为：'))
-        console.log(`「${chalk.blue(confirmResult.message)}」`)
+        Logger.error('数据校验失败！提示信息为：')
+        Logger.info(confirmResult.message)
       } else {
-        console.log(chalk.green('数据校验成功！提示信息为：'))
-        console.log(`「${chalk.blue(confirmResult.message)}」`)
-        await page.evaluate(() => {
-          // eslint-disable-next-line no-undef
-          $('.wapcf-btn.wapcf-btn-ok').click()
-        })
-        await page.waitForSelector('.wapat-title')
-        const saveResult = await page.evaluate(() => {
-          // eslint-disable-next-line no-undef
-          const message = $('.wapat-title').text()
-          if (message === '提交信息成功') {
-            return {
-              error: false,
-              message
-            }
-          } else {
-            return {
-              error: true,
-              message
-            }
-          }
-        })
+        Logger.success('数据校验成功！提示信息为：')
+        Logger.info(confirmResult.message)
+        await clickSaveButton(page)
+        await waitForSaveDone(page)
+        const saveResult = await getSaveResult(page)
         if (saveResult.error) {
-          console.log(chalk.red('数据提交失败！提示信息为：'))
-          console.log(`「${chalk.blue(saveResult.message)}」`)
+          Logger.error('数据提交失败！提示信息为：')
+          Logger.info(saveResult.message)
         } else {
-          console.log(chalk.green('数据提交成功！提示信息为：'))
-          console.log(`「${chalk.blue(saveResult.message)}」`)
+          Logger.success('数据提交成功！提示信息为：')
+          Logger.info(saveResult.message)
         }
       }
     }
+    await Logger.screenshot(page, 'Success')
   } catch (error) {
-    console.log(chalk.red('发生运行错误！'))
-    console.log(error)
+    if (error.name === 'TimeoutError') {
+      if (currentAttempts < MAX_ATTEMPTS) {
+        currentAttempts++
+        Logger.warn(`操作超时，正在重试第 ${currentAttempts} 次……`)
+        main()
+      } else {
+        Logger.error('操作超时，且已达最大重试次数！')
+        Logger.log(error)
+        await Logger.screenshot(page, 'TimeoutError')
+      }
+    } else {
+      Logger.error('发生运行错误！')
+      Logger.log(error)
+      await Logger.screenshot(page, 'RuntimeError')
+    }
   }
-  console.log(chalk.bold.blue('程序执行完毕，退出！'))
+  Logger.info('程序执行完毕，退出！')
   await browser.close()
 }
