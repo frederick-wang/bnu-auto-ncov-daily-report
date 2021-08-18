@@ -3,16 +3,15 @@ const path = require('path')
 const chalk = require('chalk')
 const puppeteer = require('puppeteer')
 
-const config = { username: '', password: '', geo_api_info: {} }
+const config = { username: '', password: '' }
 const CONFIG_PATH = path.resolve(__dirname, './config.json')
 
 if (fs.existsSync(CONFIG_PATH)) {
-  const { username, password, geo_api_info } = require(CONFIG_PATH)
-  if (username && password && geo_api_info) {
+  const { username, password } = require(CONFIG_PATH)
+  if (username && password) {
     console.log(chalk.green('配置文件加载成功！'))
     config.username = username
     config.password = password
-    config.geo_api_info = geo_api_info
     main()
   } else {
     console.log(chalk.red('加载配置文件 config.json 失败！'))
@@ -75,9 +74,9 @@ async function main () {
       console.log(chalk.green('登录成功！'))
       await page.waitForSelector('.item-buydate.form-detail2')
       console.log(chalk.green('打卡页加载成功！'))
-      const confirmResult = await page.evaluate((geo_api_info) => {
+      const confirmResult = await page.evaluate(() => {
         // eslint-disable-next-line no-undef
-        vm.locatComplete(geo_api_info)
+        vm.locatComplete(JSON.parse(vm.oldInfo.geo_api_info))
         // eslint-disable-next-line no-undef
         vm.confirm()
         // eslint-disable-next-line no-undef
@@ -96,7 +95,7 @@ async function main () {
             message: $('.wapat-title').text()
           }
         }
-      }, config.geo_api_info)
+      })
       if (confirmResult.error) {
         console.log(chalk.red('数据校验失败！提示信息为：'))
         console.log(`「${chalk.blue(confirmResult.message)}」`)
