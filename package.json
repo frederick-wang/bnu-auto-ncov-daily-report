@@ -1,0 +1,34 @@
+{
+  "name": "bnu-auto-ncov-daily-report",
+  "version": "1.0.0",
+  "description": "北师大每日上报自动打卡",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frederick-wang/bnu-auto-ncov-daily-report.git"
+  },
+  "keywords": [
+    "bnu",
+    "ncov",
+    "auto",
+    "daily-report"
+  ],
+  "author": "Zhaoji Wang",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/frederick-wang/bnu-auto-ncov-daily-report/issues"
+  },
+  "homepage": "https://github.com/frederick-wang/bnu-auto-ncov-daily-report#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "fs-extra": "^10.0.0",
+    "puppeteer": "^10.2.0"
+  }
+}

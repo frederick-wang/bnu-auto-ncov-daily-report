@@ -1,0 +1,5 @@
+{
+  "username": "用户名",
+  "password": "密码",
+  "geo_api_info": "通过高德地图 JS API 的 AMap.Geolocation 获取到的数据"
+}
