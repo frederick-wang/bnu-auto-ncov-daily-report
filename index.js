@@ -2,7 +2,8 @@ const fs = require('fs-extra')
 const puppeteer = require('puppeteer')
 const {
   CONFIG_FILE_PATH,
-  MAX_ATTEMPTS
+  MAX_ATTEMPTS,
+  ATTEMPTS_INTERVAL
 } = require('./env')
 const {
   Logger,
@@ -85,7 +86,8 @@ async function main () {
     if (error.name === 'TimeoutError') {
       if (currentAttempts < MAX_ATTEMPTS) {
         currentAttempts++
-        Logger.warn(`操作超时，正在重试第 ${currentAttempts} 次……`)
+        Logger.warn(`操作超时，稍后将重试第 ${currentAttempts} 次……`)
+        await page.waitForTimeout(ATTEMPTS_INTERVAL)
         main()
       } else {
         Logger.error('操作超时，且已达最大重试次数！')
