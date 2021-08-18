@@ -1,11 +1,13 @@
-const fs = require('fs-extra')
+const fs = require('fs')
+const path = require('path')
 const chalk = require('chalk')
 const puppeteer = require('puppeteer')
 
 const config = { username: '', password: '', geo_api_info: {} }
+const CONFIG_PATH = path.resolve(__dirname, './config.json')
 
-if (fs.existsSync('./config.json')) {
-  const { username, password, geo_api_info } = require('./config.json')
+if (fs.existsSync(CONFIG_PATH)) {
+  const { username, password, geo_api_info } = require(CONFIG_PATH)
   if (username && password && geo_api_info) {
     console.log(chalk.green('配置文件加载成功！'))
     config.username = username
