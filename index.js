@@ -55,32 +55,42 @@ async function main () {
     await login(page, config.username, config.password)
     await waitForloggingIn(page)
     const loginResult = await getLoginResult(page)
+
     if (loginResult.error) {
       Logger.error('登录失败！提示信息为：')
       Logger.info(loginResult.message)
-    } else {
-      Logger.success('登录成功！')
-      await waitForIndexPage(page)
-      Logger.success('打卡页加载成功！')
-      const confirmResult = await getConfirmResult(page)
-      if (confirmResult.error) {
-        Logger.error('数据校验失败！提示信息为：')
-        Logger.info(confirmResult.message)
-      } else {
-        Logger.success('数据校验成功！提示信息为：')
-        Logger.info(confirmResult.message)
-        await clickSaveButton(page)
-        await waitForSaveDone(page)
-        const saveResult = await getSaveResult(page)
-        if (saveResult.error) {
-          Logger.error('数据提交失败！提示信息为：')
-          Logger.info(saveResult.message)
-        } else {
-          Logger.success('数据提交成功！提示信息为：')
-          Logger.info(saveResult.message)
-        }
-      }
+      await exit(browser)
+      return
     }
+
+    Logger.success('登录成功！')
+    await waitForIndexPage(page)
+    Logger.success('打卡页加载成功！')
+    const confirmResult = await getConfirmResult(page)
+
+    if (confirmResult.error) {
+      Logger.error('数据校验失败！提示信息为：')
+      Logger.info(confirmResult.message)
+      await exit(browser)
+      return
+    }
+
+    Logger.success('数据校验成功！提示信息为：')
+    Logger.info(confirmResult.message)
+    await clickSaveButton(page)
+    await waitForSaveDone(page)
+    const saveResult = await getSaveResult(page)
+
+    if (saveResult.error) {
+      Logger.error('数据提交失败！提示信息为：')
+      Logger.info(saveResult.message)
+      await exit(browser)
+      return
+    }
+
+    Logger.success('数据提交成功！提示信息为：')
+    Logger.info(saveResult.message)
+
     await Logger.screenshot(page, 'Success')
   } catch (error) {
     if (error.name === 'TimeoutError') {
@@ -100,6 +110,9 @@ async function main () {
       await Logger.screenshot(page, 'RuntimeError')
     }
   }
+  await exit(browser)
+}
+async function exit (browser) {
   Logger.info('程序执行完毕，退出！')
   await browser.close()
 }
