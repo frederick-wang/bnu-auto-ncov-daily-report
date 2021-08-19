@@ -23,8 +23,36 @@
 
 ## 配置文件字段说明
 
-### username
+### username （必填）
 填入学号。
 
-### password
+### password （必填）
 填入数字京师的密码。
+
+### mail （非必填）
+
+如果不需要开启邮件提醒功能，保持 `mail` 字段为 `null` 即可。
+
+如果需要开启邮件提醒功能，需要设置 SMTP 服务器与邮件模板信息。示例如下：
+
+```json
+{
+  "mail": {
+    "transport": {
+      "host": "这里填入 SMTP 服务器，比如可以用 QQ 的SMTP服务器",
+      "port": 465,
+      "secure": true,
+      "auth": {
+        "user": "邮箱名",
+        "pass": "密码"
+      }
+    },
+    "info": {
+      "from": "\"北师大打卡助手\" <邮箱名>",
+      "to": "输入接收通知邮件的邮箱",
+      "subject": "[北师大打卡助手] ${date} 自动打卡记录",
+      "html": "<p>学号为 ${username} 的用户：</p><p>您的今日打卡结果为：<strong>${result}</strong>。</p><p>系统提示为：「${message}」。</p><p>打卡时间为：${date} ${time}。</p><br><p>北师大打卡助手</p><p>Powered by Zhaoji Wang</p>"
+    }
+  }
+}
+```

@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const { Logger } = require('./logger')
-
 const { MAX_ATTEMPTS, ATTEMPTS_INTERVAL, REPORT_PAGE_URL } = require('../env')
+const { sendMail } = require('./mail')
 
 const {
   getLocationHref,
@@ -31,6 +31,42 @@ const exit = async (browser) => {
   await browser.close()
 }
 
+const send = async (config, result, message) => {
+  if (
+    config &&
+    config.mail &&
+    config.mail.info &&
+    config.mail.transport
+  ) {
+    const { host, port, secure, auth } = config.mail.transport
+    if (!host || !port || !secure || !auth || !auth.user || !auth.pass) {
+      const e = new Error('加载邮件 SMTP 配置失败！')
+      e.name = 'ConfigError'
+      Logger.error(e)
+      return
+    }
+    const { from, to, subject, html } = config.mail.info
+    if (!from || !to || !subject || !html) {
+      const e = new Error('加载邮件发件信息失败！')
+      e.name = 'ConfigError'
+      Logger.error(e)
+      return
+    }
+    try {
+      await sendMail(config.mail.info, config.mail.transport, {
+        username: config.username,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        result,
+        message
+      })
+    } catch (error) {
+      Logger.error('通知邮件发送失败！')
+      Logger.log(error)
+    }
+  }
+}
+
 const bootstrap = async (config) => {
   let currentAttempts = 0
   const { page, browser } = await startPPTR()
@@ -48,6 +84,7 @@ const bootstrap = async (config) => {
       Logger.error('登录失败！提示信息为：')
       Logger.info(loginResult.message)
       await Logger.screenshot(page, 'LoginError')
+      await send(config, '登录失败', loginResult.message)
       await exit(browser)
       return
     }
@@ -59,8 +96,9 @@ const bootstrap = async (config) => {
 
     if (confirmResult.error) {
       Logger.error('数据校验失败！提示信息为：')
-      Logger.info(confirmResult.message)
+      Logger.info(`「${confirmResult.message}」`)
       await Logger.screenshot(page, 'ConfirmError')
+      await send(config, '数据校验失败', confirmResult.message)
       await exit(browser)
       return
     }
@@ -75,6 +113,7 @@ const bootstrap = async (config) => {
       Logger.error('数据提交失败！提示信息为：')
       Logger.info(saveResult.message)
       await Logger.screenshot(page, 'SaveError')
+      await send(config, '数据提交失败', saveResult.message)
       await exit(browser)
       return
     }
@@ -82,6 +121,7 @@ const bootstrap = async (config) => {
     Logger.success('数据提交成功！提示信息为：')
     Logger.info(saveResult.message)
     await Logger.screenshot(page, 'Success')
+    await send(config, '数据提交成功', saveResult.message)
     await exit(browser)
   } catch (error) {
     if (error.name === 'TimeoutError') {
@@ -94,11 +134,15 @@ const bootstrap = async (config) => {
         Logger.error('操作超时，且已达最大重试次数！')
         Logger.log(error)
         await Logger.screenshot(page, 'TimeoutError')
+        await send(config, '操作超时，且已达最大重试次数', error.toString())
+        await exit(browser)
       }
     } else {
       Logger.error('发生运行错误！')
       Logger.log(error)
       await Logger.screenshot(page, 'RuntimeError')
+      await send(config, '发生运行错误', error.toString())
+      await exit(browser)
     }
   }
 }
