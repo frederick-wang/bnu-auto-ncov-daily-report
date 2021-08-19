@@ -18,7 +18,7 @@
 
 1. 保证之前至少已经完成过一次手动打卡。
 2. 将 `config.sample.json` 复制一份并命名为 `config.json`。
-3. 填写 `config.json` 的三个字段：`username`，`password`。
+3. 填写 `config.json` 的 2 个字段：`username`，`password`。
 4. 在服务器设置定时任务，用 `node` 执行 `app.js`。
 
 ## 配置文件字段说明
