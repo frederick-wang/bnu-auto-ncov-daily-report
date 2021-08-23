@@ -1,3 +1,9 @@
+/**
+ * 获取打卡结果
+ *
+ * @param {*} page
+ * @returns {Promise<{ error: boolean; message: string; }>}
+ */
 const getSaveResult = async (page) => {
   return await page.evaluate(() => {
     // eslint-disable-next-line no-undef
@@ -16,6 +22,12 @@ const getSaveResult = async (page) => {
   })
 }
 
+/**
+ * 获取数据校验结果
+ *
+ * @param {*} page
+ * @returns {Promise<{ error: boolean; message: string; }>}
+ */
 const getConfirmResult = async (page) => {
   return await page.evaluate(() => {
     // eslint-disable-next-line no-undef
@@ -38,13 +50,6 @@ const getConfirmResult = async (page) => {
         message: $('.wapat-title').text()
       }
     }
-  })
-}
-
-const clickSaveButton = async (page) => {
-  await page.evaluate(() => {
-    // eslint-disable-next-line no-undef
-    $('.wapcf-btn.wapcf-btn-ok').click()
   })
 }
 
@@ -87,7 +92,7 @@ const LoginPageType = {
  * 等待登录页面加载完成
  *
  * @param {*} page
- * @returns {Promise<string>}
+ * @returns {Promise<{ href: string; type: string; }>}
  */
 const waitForLoginPage = (page) =>
   new Promise((resolve, reject) => {
@@ -116,6 +121,8 @@ const waitForLoginPage = (page) =>
  *
  * @param {*} page
  * @param {string} type
+ * 
+ * @returns {Promise<{ error: boolean; message: string; }>}
  */
 const waitForloggingIn = (page, type) =>
   new Promise((resolve, reject) => {
@@ -189,17 +196,38 @@ const waitForIndexPage = async (page) => {
   await page.waitForSelector('.item-buydate.form-detail2')
 }
 
+const clickSaveButton = (page) => page.click('.wapcf-btn.wapcf-btn-ok')
 
-const waitForSaveDone = async (page) => {
-  await page.waitForSelector('.wapat-title')
+const waitForSaveDone = (page) => page.waitForSelector('.wapat-title')
+
+/**
+ * 用户登录
+ *
+ * @param {*} page
+ * @param {string} username
+ * @param {string} password
+ * @param {string} loginPageType
+ * @returns
+ */
+const login = async (page, username, password, loginPageType) => {
+  await simulateLogin(page, username, password, loginPageType)
+  return await waitForloggingIn(page, loginPageType)
+}
+
+/**
+ * 打卡
+ *
+ * @param {*} page
+ * @returns
+ */
+const save = async (page) => {
+  await clickSaveButton(page)
+  await waitForSaveDone(page)
+  return await getSaveResult(page)
 }
 
 exports.getConfirmResult = getConfirmResult
-exports.getSaveResult = getSaveResult
-exports.clickSaveButton = clickSaveButton
-exports.simulateLogin = simulateLogin
-// exports.getLoginResult = getLoginResult
+exports.login = login
+exports.save = save
 exports.waitForLoginPage = waitForLoginPage
-exports.waitForloggingIn = waitForloggingIn
 exports.waitForIndexPage = waitForIndexPage
-exports.waitForSaveDone = waitForSaveDone
