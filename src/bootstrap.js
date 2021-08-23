@@ -48,12 +48,12 @@ const bootstrap = async (config) => {
         bootstrap()
       } else {
         await handleProgramError(browser, page, config,
-          { result: '操作超时，且已达最大重试次数', type: 'TimeoutError', message: error.toString() }
+          { result: '操作超时，且已达最大重试次数', type: 'TimeoutError', error }
         )
       }
     } else {
       await handleProgramError(browser, page, config,
-        { result: '发生运行错误', type: 'RuntimeError', message: error.toString() }
+        { result: '发生运行错误', type: 'RuntimeError', error }
       )
     }
   }

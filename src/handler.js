@@ -17,9 +17,9 @@ const exit = async (browser) => {
  */
 const handleError = async (browser, page, config, tip, params) => {
   Logger.error(`${params.result}！${tip}：`)
-  Logger.log(params.message)
+  Logger.log(params.error)
   await Logger.screenshot(page, params.type)
-  await send(config, params.result, params.message)
+  await send(config, params.result, params.error.toString())
   await exit(browser)
 }
 
