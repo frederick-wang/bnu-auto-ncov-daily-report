@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer')
-const { Logger } = require('./logger')
 
+const { Logger } = require('./logger')
 const {
   waitForLoginPage,
   waitForIndexPage,

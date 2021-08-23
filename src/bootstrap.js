@@ -1,9 +1,7 @@
 const { Logger } = require('./logger')
 const { MAX_ATTEMPTS, ATTEMPTS_INTERVAL, REPORT_PAGE_URL } = require('../env')
 const { handleProgramError, handleResultError } = require('./handler')
-
 const { getConfirmResult, login } = require('./util')
-
 const { startPPTR, loadLoginPage, loadIndexPage, submitReportData } = require('./procedure.js')
 
 const bootstrap = async (config) => {
