@@ -24,7 +24,7 @@ const bootstrap = async (config) => {
     Logger.success('登录成功！')
 
     // 加载打卡页
-    await loadIndexPage()
+    await loadIndexPage(page)
 
     // 数据校验
     const confirmResult = await getConfirmResult(page)
