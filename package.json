@@ -2,9 +2,9 @@
   "name": "bnu-auto-ncov-daily-report",
   "version": "1.0.0",
   "description": "北师大每日上报自动打卡",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf ./log ./screenshot"
   },
