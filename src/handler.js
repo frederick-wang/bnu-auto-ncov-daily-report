@@ -12,14 +12,11 @@ const exit = async (browser) => {
  * @param {*} browser
  * @param {*} page
  * @param {*} config
- * @param {string} tip
  * @param {{ result: string; type: string; message: string; }} params
  */
-const handleError = async (browser, page, config, tip, params) => {
-  Logger.error(`${params.result}！${tip}：`)
-  Logger.log(params.error)
+const handleError = async (browser, page, config, params) => {
   await Logger.screenshot(page, params.type)
-  await send(config, params.result, params.error.toString())
+  await send(config, params.result, params.message)
   await exit(browser)
 }
 
@@ -31,8 +28,10 @@ const handleError = async (browser, page, config, tip, params) => {
  * @param {*} config
  * @param {{ result: string; type: string; message: string; }} params
  */
-const handleResultError = async (browser, page, config, params) => {
-  await handleError(browser, page, config, '提示信息为', params)
+const handleResultError = async (browser, page, config, { result, type, message }) => {
+  Logger.error(`${result}！提示信息为：`)
+  Logger.log(`「${message}」`)
+  await handleError(browser, page, config, { result, type, message })
 }
 
 /**
@@ -41,10 +40,12 @@ const handleResultError = async (browser, page, config, params) => {
  * @param {*} browser
  * @param {*} page
  * @param {*} config
- * @param {{ result: string; type: string; message: string; }} params
+ * @param {{ result: string; type: string; error: Error; }} params
  */
-const handleProgramError = async (browser, page, config, params) => {
-  await handleError(browser, page, config, '错误内容为', params)
+const handleProgramError = async (browser, page, config, { result, type, error }) => {
+  Logger.error(`${result}！错误内容为：`)
+  Logger.log(error)
+  await handleError(browser, page, config, { result, type, message: error.toString() })
 }
 
 /**
