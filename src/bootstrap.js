@@ -1,15 +1,13 @@
 const puppeteer = require('puppeteer')
 const { Logger } = require('./logger')
 const { MAX_ATTEMPTS, ATTEMPTS_INTERVAL, REPORT_PAGE_URL } = require('../env')
-const { sendMail } = require('./mail')
+const { send } = require('./mail')
 
 const {
-  getLocationHref,
   getConfirmResult,
   getSaveResult,
   clickSaveButton,
-  login,
-  getLoginResult,
+  simulateLogin,
   waitForLoginPage,
   waitForloggingIn,
   waitForIndexPage,
@@ -31,58 +29,20 @@ const exit = async (browser) => {
   await browser.close()
 }
 
-const send = async (config, result, message) => {
-  if (
-    config &&
-    config.mail &&
-    config.mail.info &&
-    config.mail.transport
-  ) {
-    const { host, port, secure, auth } = config.mail.transport
-    if (!host || !port || !secure || !auth || !auth.user || !auth.pass) {
-      const e = new Error('加载邮件 SMTP 配置失败！')
-      e.name = 'ConfigError'
-      Logger.error(e)
-      return
-    }
-    const { from, to, subject, html } = config.mail.info
-    if (!from || !to || !subject || !html) {
-      const e = new Error('加载邮件发件信息失败！')
-      e.name = 'ConfigError'
-      Logger.error(e)
-      return
-    }
-    try {
-      await sendMail(config.mail.info, config.mail.transport, {
-        username: config.username,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-        result,
-        message
-      })
-    } catch (error) {
-      Logger.error('通知邮件发送失败！')
-      Logger.log(error)
-    }
-  }
-}
-
 const bootstrap = async (config) => {
   let currentAttempts = 0
   const { page, browser } = await startPPTR()
   try {
     await page.goto(REPORT_PAGE_URL)
-    await waitForLoginPage(page)
+    const { type: loginPageType, href: loginPageUrl } = await waitForLoginPage(page)
     Logger.success('登录页加载成功！')
-    const loginPageUrl = await getLocationHref(page)
     Logger.info(`登录页地址为:`, loginPageUrl)
-    await login(page, config.username, config.password)
-    await waitForloggingIn(page)
-    const loginResult = await getLoginResult(page)
+    await simulateLogin(page, config.username, config.password, loginPageType)
+    const loginResult = await waitForloggingIn(page, loginPageType)
 
     if (loginResult.error) {
-      Logger.error('登录失败！提示信息为：')
-      Logger.info(loginResult.message)
+      Logger.error('登录失败！提示信息为: ')
+      Logger.info(`「${loginResult.message}」`)
       await Logger.screenshot(page, 'LoginError')
       await send(config, '登录失败', loginResult.message)
       await exit(browser)
@@ -95,7 +55,7 @@ const bootstrap = async (config) => {
     const confirmResult = await getConfirmResult(page)
 
     if (confirmResult.error) {
-      Logger.error('数据校验失败！提示信息为：')
+      Logger.error('数据校验失败！提示信息为: ')
       Logger.info(`「${confirmResult.message}」`)
       await Logger.screenshot(page, 'ConfirmError')
       await send(config, '数据校验失败', confirmResult.message)
@@ -103,23 +63,23 @@ const bootstrap = async (config) => {
       return
     }
 
-    Logger.success('数据校验成功！提示信息为：')
-    Logger.info(confirmResult.message)
+    Logger.success('数据校验成功！提示信息为: ')
+    Logger.info(`「${confirmResult.message}」`)
     await clickSaveButton(page)
     await waitForSaveDone(page)
     const saveResult = await getSaveResult(page)
 
     if (saveResult.error) {
-      Logger.error('数据提交失败！提示信息为：')
-      Logger.info(saveResult.message)
+      Logger.error('数据提交失败！提示信息为: ')
+      Logger.info(`「${saveResult.message}」`)
       await Logger.screenshot(page, 'SaveError')
       await send(config, '数据提交失败', saveResult.message)
       await exit(browser)
       return
     }
 
-    Logger.success('数据提交成功！提示信息为：')
-    Logger.info(saveResult.message)
+    Logger.success('数据提交成功！提示信息为: ')
+    Logger.info(`「${saveResult.message}」`)
     await Logger.screenshot(page, 'Success')
     await send(config, '数据提交成功', saveResult.message)
     await exit(browser)
