@@ -18,7 +18,7 @@
 
 1. 保证之前至少已经完成过一次手动打卡。
 2. 将 `config.sample.json` 复制一份并命名为 `config.json`。
-3. 填写 `config.json` 的 2 个字段：`username`，`password`。
+3. 填写 `config.json` 的 2 个字段: `username`，`password`。
 4. 在服务器设置定时任务，用 `node` 执行 `app.js`。
 
 ## 配置文件字段说明
@@ -33,7 +33,7 @@
 
 如果不需要开启邮件提醒功能，保持 `mail` 字段为 `null` 即可。
 
-如果需要开启邮件提醒功能，需要设置 SMTP 服务器与邮件模板信息。示例如下：
+如果需要开启邮件提醒功能，需要设置 SMTP 服务器与邮件模板信息。示例如下: 
 
 ```json
 {
@@ -51,7 +51,7 @@
       "from": "\"北师大打卡助手\" <邮箱名>",
       "to": "输入接收通知邮件的邮箱",
       "subject": "[北师大打卡助手] ${date} 自动打卡记录",
-      "html": "<p>学号为 ${username} 的用户：</p><p>您的今日打卡结果为：<strong>${result}</strong>。</p><p>系统提示为：「${message}」。</p><p>打卡时间为：${date} ${time}。</p><br><p>北师大打卡助手</p><p>Powered by Zhaoji Wang</p>"
+      "html": "<p>学号为 ${username} 的用户: </p><p>您的今日打卡结果为: <strong>${result}</strong>。</p><p>系统提示为: 「${message}」。</p><p>打卡时间为: ${date} ${time}。</p><br><p>北师大打卡助手</p><p>Powered by Zhaoji Wang</p>"
     }
   }
 }
