@@ -57,10 +57,10 @@ Options:
   -V, --version                    output the version number
   -u, --username <username>        数字京师用户名
   -p, --password <password>        数字京师密码
-  -m, --mail                       是否开启邮件通知功能
+  -m, --mail <boolean>             是否开启邮件通知功能，`true` 为开启，`false` 为不开启
   -h, --mail_host <host>           SMTP 服务器
   -o, --mail_port <port>           SMTP 服务器端口
-  -s, --mail_secure                SMTP 服务器端口是否加密
+  -s, --mail_secure <boolean>      SMTP 服务器端口是否加密，`true` 为加密，`false` 为不加密
   -U, --mail_user <mail_uesrname>  SMTP 服务器登录用户名
   -P, --mail_pass <mail_password>  SMTP 服务器登录密码
   -t, --mail_to <receiver>         邮件通知的收件人邮箱
@@ -91,7 +91,7 @@ node app -u 数字京师用户名 -p 数字京师密码 -m -h SMTP服务器 -o S
 
 如果不需要开启邮件提醒功能，保持 `mail` 属性为 `false` 即可。
 
-如果需要开启邮件提醒功能，需要设置 SMTP 服务器与收件邮箱信息。示例如下: 
+如果需要开启邮件提醒功能，除了将 `mail` 设置为 `true`，还需要设置 SMTP 服务器与收件邮箱信息。示例如下: 
 
 ```json
 {
