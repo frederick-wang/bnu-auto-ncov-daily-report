@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 const { Logger } = require('./logger')
-const { getBeijingTime } = './util'
+const { getBeijingTime } = require('./util')
 
 const replaceInfoParams = (str, params) => {
   let result = str

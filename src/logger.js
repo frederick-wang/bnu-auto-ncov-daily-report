@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs-extra')
 const { LOG_FILE_PATH, SCREENSHOT_PATH } = require('../env')
-const { getBeijingTime } = './util'
+const { getBeijingTime } = require('./util')
 
 const Logger = {
   prefix: () => `[${getBeijingTime().full}]`,
