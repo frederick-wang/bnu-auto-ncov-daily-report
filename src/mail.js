@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer')
 const { Logger } = require('./logger')
+const { getBeijingTime } = './util'
 
 const replaceInfoParams = (str, params) => {
   let result = str
@@ -24,8 +25,8 @@ const send = async (config, result, message) => {
     try {
       await sendMail(config.mail.info, config.mail.transport, {
         username: config.username,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
+        date: getBeijingTime().date,
+        time: getBeijingTime().time,
         result,
         message
       })

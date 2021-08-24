@@ -2,9 +2,10 @@ const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs-extra')
 const { LOG_FILE_PATH, SCREENSHOT_PATH } = require('../env')
+const { getBeijingTime } = './util'
 
 const Logger = {
-  prefix: () => `[${new Date().toLocaleString()}]`,
+  prefix: () => `[${getBeijingTime().full}]`,
   log(...args) {
     const prefix = this.prefix()
     console.log(chalk.gray(prefix), ...args)

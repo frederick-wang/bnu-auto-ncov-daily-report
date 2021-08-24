@@ -1,3 +1,18 @@
+const getBeijingTime = () => {
+  const localDate = new Date()
+  const timestamp = localDate.getTime()
+  const timezoneOffset = localDate.getTimezoneOffset()
+  const beijingDate = new Date(
+    timestamp + (timezoneOffset + 8 * 60) * 60 * 1000
+  )
+  return {
+    date: beijingDate.toLocaleDateString('zh-CN'),
+    time: beijingDate.toLocaleTimeString('zh-CN'),
+    full: beijingDate.toLocaleString('zh-CN'),
+    timestamp
+  }
+}
+
 /**
  * 获取打卡结果
  *
@@ -249,3 +264,4 @@ exports.login = login
 exports.save = save
 exports.waitForLoginPage = waitForLoginPage
 exports.waitForIndexPage = waitForIndexPage
+exports.getBeijingTime = getBeijingTime
