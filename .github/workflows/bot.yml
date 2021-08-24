@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   schedule:
     # 北京时间是 UTC+8 时区，所以如果想在北京时间 00:05 打卡，就需要把定时任务设置在 16:05 (UTC)
-    - cron: '30 17 * * *'
+    - cron: '45 16 * * *'
 
 jobs:
   submit-report:
