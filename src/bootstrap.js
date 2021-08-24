@@ -59,7 +59,7 @@ const bootstrap = async (config) => {
     currentAttempts++
     Logger.warn(`操作超时，稍后将重试第 ${currentAttempts} 次……`)
     await page.waitForTimeout(ATTEMPTS_INTERVAL)
-    await bootstrap()
+    await bootstrap(config)
   }
 }
 
