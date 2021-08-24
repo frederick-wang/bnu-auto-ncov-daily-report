@@ -17,6 +17,10 @@ const bootstrap = async (config) => {
   let currentAttempts = 0
   // 初始化 Puppeteer
   const { browser, page } = await startPPTR()
+  /**
+   * browser, page, config 这三组参数经常一起调用。
+   * 把它们放在一起，之后调用时，使用展开运算符直接传参
+   */
   const bpc = [browser, page, config]
   try {
     // 访问打卡应用网址
