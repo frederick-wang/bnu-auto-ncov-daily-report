@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 
+const PACKAGE_JSON_PATH = path.resolve(__dirname, './package.json')
 const CONFIG_FILE_PATH = path.resolve(__dirname, './config.json')
 const SCREENSHOT_PATH = path.resolve(__dirname, './screenshot')
 const LOG_PATH = path.resolve(__dirname, './log')
@@ -15,6 +16,7 @@ fs.ensureDirSync(SCREENSHOT_PATH)
 fs.ensureDirSync(LOG_PATH)
 
 exports.LOG_PATH = LOG_PATH
+exports.PACKAGE_JSON_PATH = PACKAGE_JSON_PATH
 exports.CONFIG_FILE_PATH = CONFIG_FILE_PATH
 exports.SCREENSHOT_PATH = SCREENSHOT_PATH
 exports.LOG_FILE_PATH = LOG_FILE_PATH

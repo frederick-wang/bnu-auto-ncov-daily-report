@@ -20,21 +20,7 @@ const sendMail = async (mailInfo, transportConfig, params) => {
 }
 
 const send = async (config, result, message) => {
-  if (config && config.mail && config.mail.info && config.mail.transport) {
-    const { host, port, secure, auth } = config.mail.transport
-    if (!host || !port || !secure || !auth || !auth.user || !auth.pass) {
-      const e = new Error('加载邮件 SMTP 配置失败！')
-      e.name = 'ConfigError'
-      Logger.error(e)
-      return
-    }
-    const { from, to, subject, html } = config.mail.info
-    if (!from || !to || !subject || !html) {
-      const e = new Error('加载邮件发件信息失败！')
-      e.name = 'ConfigError'
-      Logger.error(e)
-      return
-    }
+  if (config && config.mail) {
     try {
       await sendMail(config.mail.info, config.mail.transport, {
         username: config.username,
