@@ -21,12 +21,12 @@
   - **USERNAME**：填写学号
   - **PASSWORD**：填写密码
   - **MAIL**：是否开启邮件通知功能，`true` 为开启，`false` 为不开启。
-  - **MAIL_HOST**：SMTP 服务器
-  - **MAIL_PORT**：SMTP 服务器端口，填数字
-  - **MAIL_SECURE**：SMTP 服务器端口是否加密，`true` 为加密，`false` 为不加密
-  - **MAIL_USER**：SMTP 服务器登录用户名
-  - **MAIL_PASS**：SMTP 服务器登录密码
-  - **MAIL_TO**：邮件通知的收件人邮箱
+  - **MAIL_HOST**：SMTP 服务器（只在开启邮件通知功能时需要设置）
+  - **MAIL_PORT**：SMTP 服务器端口，填数字（只在开启邮件通知功能时需要设置）
+  - **MAIL_SECURE**：SMTP 服务器端口是否加密，`true` 为加密，`false` 为不加密（只在开启邮件通知功能时需要设置）
+  - **MAIL_USER**：SMTP 服务器登录用户名（只在开启邮件通知功能时需要设置）
+  - **MAIL_PASS**：SMTP 服务器登录密码（只在开启邮件通知功能时需要设置）
+  - **MAIL_TO**：邮件通知的收件人邮箱（只在开启邮件通知功能时需要设置）
 
 之后，就会在北京时间每天 00:05 自动打卡了（Github Actions 可能有一定的延迟），如果配置了邮件提醒，还会自动发送邮件到你的邮箱。
 

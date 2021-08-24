@@ -29,4 +29,4 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
         MAIL: ${{ secrets.MAIL }}
-      run: npm start -- -u "$USERNAME" -p "$PASSWORD" -m "$MAIL"
+      run: npm start -- -u "$USERNAME" -p "$PASSWORD" -m "$MAIL"-h "$MAIL_HOST" -o "$MAIL_PORT" -s "$MAIL_SECURE" -U "$MAIL_USER" -P "$MAIL_PASS" -t "$MAIL_TO"
