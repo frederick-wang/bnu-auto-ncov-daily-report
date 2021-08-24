@@ -4,6 +4,7 @@ const { send } = require('./mail')
 const exit = async (browser) => {
   Logger.info('程序执行完毕，退出！')
   await browser.close()
+  process.exit()
 }
 
 /**
