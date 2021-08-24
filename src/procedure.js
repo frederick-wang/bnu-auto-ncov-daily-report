@@ -21,18 +21,27 @@ const startPPTR = async () => {
 }
 
 const loadLoginPage = async (page) => {
-  const { type: loginPageType, href: loginPageUrl } = await waitForLoginPage(page)
+  const { type: loginPageType, href: loginPageUrl } = await waitForLoginPage(
+    page
+  )
   Logger.success('登录页加载成功！')
   Logger.info(`登录页地址为:`, loginPageUrl)
   return { type: loginPageType }
 }
 
 const userLogin = async (browser, page, config, loginPageType) => {
-  const loginResult = await login(page, config.username, config.password, loginPageType)
+  const loginResult = await login(
+    page,
+    config.username,
+    config.password,
+    loginPageType
+  )
   if (loginResult.error) {
-    await handleResultError(browser, page, config,
-      { result: '登录失败', type: 'LoginError', message: loginResult.message }
-    )
+    await handleResultError(browser, page, config, {
+      result: '登录失败',
+      type: 'LoginError',
+      message: loginResult.message
+    })
     return false
   }
   Logger.success('登录成功！')
@@ -47,9 +56,11 @@ const loadIndexPage = async (page) => {
 const confirmReportData = async (browser, page, config) => {
   const confirmResult = await getConfirmResult(page)
   if (confirmResult.error) {
-    await handleResultError(browser, page, config,
-      { result: '数据校验失败', type: 'ConfirmError', message: confirmResult.message }
-    )
+    await handleResultError(browser, page, config, {
+      result: '数据校验失败',
+      type: 'ConfirmError',
+      message: confirmResult.message
+    })
     return false
   }
   Logger.success('数据校验成功！提示信息为: ')
@@ -67,14 +78,18 @@ const confirmReportData = async (browser, page, config) => {
 const submitReportData = async (browser, page, config) => {
   const saveResult = await save(page)
   if (saveResult.error) {
-    await handleResultError(browser, page, config,
-      { result: '数据提交失败', type: 'SaveError', message: saveResult.message }
-    )
+    await handleResultError(browser, page, config, {
+      result: '数据提交失败',
+      type: 'SaveError',
+      message: saveResult.message
+    })
     return
   }
-  handleSuccess(browser, page, config,
-    { result: '数据提交成功', type: 'Success', message: saveResult.message }
-  )
+  handleSuccess(browser, page, config, {
+    result: '数据提交成功',
+    type: 'Success',
+    message: saveResult.message
+  })
 }
 
 exports.startPPTR = startPPTR

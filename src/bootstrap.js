@@ -29,23 +29,30 @@ const bootstrap = async (config) => {
     // 加载登录页
     const { type: loginPageType } = await loadLoginPage(page)
     // 用户登录
-    if (!await userLogin(...bpc, loginPageType)) return
+    if (!(await userLogin(...bpc, loginPageType))) return
     // 加载打卡页
     await loadIndexPage(page)
     // 数据校验
-    if (!await confirmReportData(...bpc)) return
+    if (!(await confirmReportData(...bpc))) return
     // 提交打卡数据
     await submitReportData(...bpc)
-
   } catch (error) {
     // TimeoutError 是 Puppeteer 的 wait 操作超时的错误名称
     if (error.name !== 'TimeoutError') {
-      await handleProgramError(...bpc, { result: '发生运行错误', type: 'RuntimeError', error })
+      await handleProgramError(...bpc, {
+        result: '发生运行错误',
+        type: 'RuntimeError',
+        error
+      })
       return
     }
 
     if (currentAttempts >= MAX_ATTEMPTS) {
-      await handleProgramError(...bpc, { result: '操作超时，且已达最大重试次数', type: 'TimeoutError', error })
+      await handleProgramError(...bpc, {
+        result: '操作超时，且已达最大重试次数',
+        type: 'TimeoutError',
+        error
+      })
       return
     }
 

@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer")
+const nodemailer = require('nodemailer')
 const { Logger } = require('./logger')
 
 const replaceInfoParams = (str, params) => {
@@ -13,20 +13,14 @@ const replaceInfoParams = (str, params) => {
 const sendMail = async (mailInfo, transportConfig, params) => {
   const transporter = nodemailer.createTransport(transportConfig)
   const mailOptions = Object.fromEntries(
-    Object.entries(mailInfo)
-      .map(([k, v]) => [k, replaceInfoParams(v, params)])
+    Object.entries(mailInfo).map(([k, v]) => [k, replaceInfoParams(v, params)])
   )
   const info = await transporter.sendMail(mailOptions)
   Logger.log('邮件已发送:', info.messageId)
 }
 
 const send = async (config, result, message) => {
-  if (
-    config &&
-    config.mail &&
-    config.mail.info &&
-    config.mail.transport
-  ) {
+  if (config && config.mail && config.mail.info && config.mail.transport) {
     const { host, port, secure, auth } = config.mail.transport
     if (!host || !port || !secure || !auth || !auth.user || !auth.pass) {
       const e = new Error('加载邮件 SMTP 配置失败！')
