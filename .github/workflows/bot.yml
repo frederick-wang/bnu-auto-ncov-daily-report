@@ -1,0 +1,32 @@
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: 'Report Bot'
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 北京时间是 UTC+8 时区，所以如果想在北京时间 00:05 打卡，就需要把定时任务设置在 16:05 (UTC)
+    - cron: '5 16 * * *'
+
+jobs:
+  submit-report:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm i
+    - shell: bash
+      env:
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        MAIL: ${{ secrets.MAIL }}
+      run: npm start -- -u "$USERNAME" -p "$PASSWORD" -m "$MAIL"
