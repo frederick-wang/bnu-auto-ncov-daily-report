@@ -17,18 +17,19 @@
 ### Github Actions（推荐）
 
 1. Fork 本仓库。
-2. 进入仓库的 Settings 页面，在左侧的菜单中选择 Secrets，点击「New repository secret」按钮，新建 3 个 Actions secrets：
-  - **USERNAME**：填写学号
-  - **PASSWORD**：填写密码
-  - **MAIL**：是否开启邮件通知功能，`true` 为开启，`false` 为不开启。
-  - **MAIL_HOST**：SMTP 服务器（只在开启邮件通知功能时需要设置）
-  - **MAIL_PORT**：SMTP 服务器端口，填数字（只在开启邮件通知功能时需要设置）
-  - **MAIL_SECURE**：SMTP 服务器端口是否加密，`true` 为加密，`false` 为不加密（只在开启邮件通知功能时需要设置）
-  - **MAIL_USER**：SMTP 服务器登录用户名（只在开启邮件通知功能时需要设置）
-  - **MAIL_PASS**：SMTP 服务器登录密码（只在开启邮件通知功能时需要设置）
-  - **MAIL_TO**：邮件通知的收件人邮箱（只在开启邮件通知功能时需要设置）
+2. 进入仓库的 Settings 页面，在左侧的菜单中选择 Secrets，点击「New repository secret」按钮，新建 Actions secrets：
+  - **USERNAME**: 填写学号（必须设置）
+  - **PASSWORD**: 填写密码（必须设置）
+  - **MAIL**: 是否开启邮件通知功能，`true` 为开启，`false` 为不开启（如果不开启，也可以直接不设置）
+  - **MAIL_HOST**: SMTP 服务器（只在开启邮件通知功能时需要设置）
+  - **MAIL_PORT**: SMTP 服务器端口，填数字（只在开启邮件通知功能时需要设置）
+  - **MAIL_SECURE**: SMTP 服务器端口是否加密，`true` 为加密，`false` 为不加密（只在开启邮件通知功能时需要设置）
+  - **MAIL_USER**: SMTP 服务器登录用户名（只在开启邮件通知功能时需要设置）
+  - **MAIL_PASS**: SMTP 服务器登录密码（只在开启邮件通知功能时需要设置）
+  - **MAIL_TO**: 邮件通知的收件人邮箱（只在开启邮件通知功能时需要设置）
+3. 进入仓库的 Actions 界面，开启 Workflows，然后选择 `Report Bot` workflow，enable workflow
 
-之后，就会在北京时间每天 00:05 自动打卡了（Github Actions 可能有一定的延迟），如果配置了邮件提醒，还会自动发送邮件到你的邮箱。
+之后，就会在北京时间每天 00:05 自动打卡了（Github Actions 可能有 15 分钟左右的延迟），如果配置了邮件提醒，还会自动发送邮件到你的邮箱。
 
 如果希望在其他时间打卡，可以在 `.github/workflows/bot.yml` 中，修改 `cron` 为你需要的时间。
 
