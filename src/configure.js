@@ -11,7 +11,6 @@ const { options } = require('./commander')
 const getConfigFromCommandLine = () => {
   const { username, password } = options
   try {
-    console.log(options.mail)
     const mail = options.mail
       ? Object.prototype.toString.call(options.mail) === '[object String]'
         ? JSON.parse(options.mail)
@@ -19,7 +18,10 @@ const getConfigFromCommandLine = () => {
       : null
     return { username, password, mail }
   } catch (error) {
-    console.error(error)
+    Logger.log(`--mail 的值为：`)
+    Logger.log(options.mail)
+    Logger.log(`解析 --mail 时的报错信息为：`)
+    Logger.error(error)
     const e = new Error('命令行参数 --mail 的值无法解析！')
     e.name = 'ConfigError'
     throw e
