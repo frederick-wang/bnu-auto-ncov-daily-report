@@ -10,11 +10,12 @@ const {
   submitReportData
 } = require('./procedure')
 
+/**
+ * 当前超时重试次数
+ */
+let currentAttempts = 0
+
 const bootstrap = async (config) => {
-  /**
-   * 当前超时重试次数
-   */
-  let currentAttempts = 0
   // 初始化 Puppeteer
   const { browser, page } = await startPPTR()
   /**
