@@ -4,5 +4,9 @@ const { bootstrap } = require('./src/bootstrap')
 
 Logger.info('程序启动！')
 
-const config = loadConfig()
-bootstrap(config)
+try {
+  const config = loadConfig()
+  bootstrap(config)
+} catch (error) {
+  Logger.error(error)
+}

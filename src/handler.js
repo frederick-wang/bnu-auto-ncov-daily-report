@@ -28,7 +28,12 @@ const handleError = async (browser, page, config, params) => {
  * @param {*} config
  * @param {{ result: string; type: string; message: string; }} params
  */
-const handleResultError = async (browser, page, config, { result, type, message }) => {
+const handleResultError = async (
+  browser,
+  page,
+  config,
+  { result, type, message }
+) => {
   Logger.error(`${result}！提示信息为：`)
   Logger.log(`「${message}」`)
   await handleError(browser, page, config, { result, type, message })
@@ -42,10 +47,19 @@ const handleResultError = async (browser, page, config, { result, type, message 
  * @param {*} config
  * @param {{ result: string; type: string; error: Error; }} params
  */
-const handleProgramError = async (browser, page, config, { result, type, error }) => {
+const handleProgramError = async (
+  browser,
+  page,
+  config,
+  { result, type, error }
+) => {
   Logger.error(`${result}！错误内容为：`)
   Logger.log(error)
-  await handleError(browser, page, config, { result, type, message: error.toString() })
+  await handleError(browser, page, config, {
+    result,
+    type,
+    message: error.toString()
+  })
 }
 
 /**
@@ -64,7 +78,6 @@ const handleSuccess = async (browser, page, config, params) => {
   await send(config, params.result, params.message)
   await exit(browser)
 }
-
 
 exports.exit = exit
 exports.handleProgramError = handleProgramError

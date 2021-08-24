@@ -64,14 +64,18 @@ const getConfirmResult = async (page) => {
 const simulateLogin = async (page, username, password, type) => {
   switch (type) {
     case LoginPageType.UC_WAP:
-      await page.evaluate((username, password) => {
-        // eslint-disable-next-line no-undef
-        vm.$data.username = username
-        // eslint-disable-next-line no-undef
-        vm.$data.password = password
-        // eslint-disable-next-line no-undef
-        vm.login()
-      }, username, password)
+      await page.evaluate(
+        (username, password) => {
+          // eslint-disable-next-line no-undef
+          vm.$data.username = username
+          // eslint-disable-next-line no-undef
+          vm.$data.password = password
+          // eslint-disable-next-line no-undef
+          vm.login()
+        },
+        username,
+        password
+      )
       return
     case LoginPageType.SITE_CENTER:
       await page.type('input[type="text"]', username)
@@ -99,21 +103,25 @@ const waitForLoginPage = (page) =>
     // https://onewechat.bnu.edu.cn/uc/wap/login
     page
       .waitForSelector('.btn')
-      .then(() => page.evaluate(() => {
-        // eslint-disable-next-line no-undef
-        return window.location.href
-      }))
+      .then(() =>
+        page.evaluate(() => {
+          // eslint-disable-next-line no-undef
+          return window.location.href
+        })
+      )
       .then((href) => resolve({ href, type: LoginPageType.UC_WAP }))
-      .catch(error => reject(error))
+      .catch((error) => reject(error))
     // https://onewechat.bnu.edu.cn/site/center/login
     page
       .waitForSelector('.login-btn')
-      .then(() => page.evaluate(() => {
-        // eslint-disable-next-line no-undef
-        return window.location.href
-      }))
+      .then(() =>
+        page.evaluate(() => {
+          // eslint-disable-next-line no-undef
+          return window.location.href
+        })
+      )
       .then((href) => resolve({ href, type: LoginPageType.SITE_CENTER }))
-      .catch(error => reject(error))
+      .catch((error) => reject(error))
   })
 
 /**
@@ -121,7 +129,7 @@ const waitForLoginPage = (page) =>
  *
  * @param {*} page
  * @param {string} type
- * 
+ *
  * @returns {Promise<{ error: boolean; message: string; }>}
  */
 const waitForloggingIn = (page, type) =>
@@ -135,57 +143,67 @@ const waitForloggingIn = (page, type) =>
           message: ''
         })
       })
-      .catch(error => reject(error))
+      .catch((error) => reject(error))
     // 如果登录失败，会在当前页面弹出错误提示。
     switch (type) {
       case LoginPageType.UC_WAP:
         page
           .waitForSelector('#wapat')
-          .then(() => page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            if ($('.wapat-title').length && !$('.wapat-title').is(':hidden')) {
-              return {
-                error: true,
+          .then(() =>
+            page.evaluate(() => {
+              if (
                 // eslint-disable-next-line no-undef
-                message: $('.wapat-title').text()
+                $('.wapat-title').length &&
+                // eslint-disable-next-line no-undef
+                !$('.wapat-title').is(':hidden')
+              ) {
+                return {
+                  error: true,
+                  // eslint-disable-next-line no-undef
+                  message: $('.wapat-title').text()
+                }
+              } else {
+                return {
+                  error: false,
+                  message: ''
+                }
               }
-            } else {
-              return {
-                error: false,
-                message: ''
-              }
-            }
-          }))
+            })
+          )
           .then((res) => {
             resolve(res)
           })
-          .catch(error => reject(error))
+          .catch((error) => reject(error))
         break
       case LoginPageType.SITE_CENTER:
         page
           .waitForSelector('img[src="/site/static/images/cha.png"]')
-          .then(() => page.evaluate(() => ({
-            error: true,
-            // eslint-disable-next-line no-undef
-            message: $('.pophint').text().trim()
-          })))
+          .then(() =>
+            page.evaluate(() => ({
+              error: true,
+              // eslint-disable-next-line no-undef
+              message: $('.pophint').text().trim()
+            }))
+          )
           .then((res) => {
             resolve(res)
           })
-          .catch(error => reject(error))
+          .catch((error) => reject(error))
         page
           .waitForSelector('.redhint')
-          .then(() => page.evaluate(() => ({
-            error: true,
-            // eslint-disable-next-line no-undef
-            message: $('.redhint').text()
-          })))
+          .then(() =>
+            page.evaluate(() => ({
+              error: true,
+              // eslint-disable-next-line no-undef
+              message: $('.redhint').text()
+            }))
+          )
           .then((res) => {
             if (res.message) {
               resolve(res)
             }
           })
-          .catch(error => reject(error))
+          .catch((error) => reject(error))
         break
       default:
         throw new Error('waitForloggingIn: 未知登录页面类型')

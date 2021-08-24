@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   chalk: ^4.1.2
+  commander: ^8.1.0
   eslint: ^7.32.0
   fs-extra: ^10.0.0
   nodemailer: ^6.6.3
@@ -9,6 +10,7 @@ specifiers:
 
 dependencies:
   chalk: 4.1.2
+  commander: 8.1.0
   fs-extra: 10.0.0
   nodemailer: 6.6.3
   puppeteer: 10.2.0
@@ -232,6 +234,11 @@ packages:
 
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  /commander/8.1.0:
+    resolution: {integrity: sha512-mf45ldcuHSYShkplHHGKWb4TrmwQadxOn7v4WuhDJy0ZVoY5JFajaRDKD0PNe5qXzBX0rhovjTnP6Kz9LETcuA==}
+    engines: {node: '>= 12'}
+    dev: false
 
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}

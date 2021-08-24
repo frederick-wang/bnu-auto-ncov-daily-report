@@ -5,33 +5,51 @@ const { LOG_FILE_PATH, SCREENSHOT_PATH } = require('../env')
 
 const Logger = {
   prefix: () => `[${new Date().toLocaleString()}]`,
-  log (...args) {
+  log(...args) {
     const prefix = this.prefix()
     console.log(chalk.gray(prefix), ...args)
-    fs.appendFileSync(LOG_FILE_PATH, `${[prefix, ...args, '(log)'].join(' ')}\n`)
+    fs.appendFileSync(
+      LOG_FILE_PATH,
+      `${[prefix, ...args, '(log)'].join(' ')}\n`
+    )
   },
-  error (...args) {
+  error(...args) {
     const prefix = this.prefix()
     console.error(chalk.redBright(prefix), ...args)
-    fs.appendFileSync(LOG_FILE_PATH, `${[prefix, ...args, '(error)'].join(' ')}\n`)
+    fs.appendFileSync(
+      LOG_FILE_PATH,
+      `${[prefix, ...args, '(error)'].join(' ')}\n`
+    )
   },
-  warn (...args) {
+  warn(...args) {
     const prefix = this.prefix()
     console.warn(chalk.yellowBright(prefix), ...args)
-    fs.appendFileSync(LOG_FILE_PATH, `${[prefix, ...args, '(warn)'].join(' ')}\n`)
+    fs.appendFileSync(
+      LOG_FILE_PATH,
+      `${[prefix, ...args, '(warn)'].join(' ')}\n`
+    )
   },
-  info (...args) {
+  info(...args) {
     const prefix = this.prefix()
     console.info(chalk.blueBright(prefix), ...args)
-    fs.appendFileSync(LOG_FILE_PATH, `${[prefix, ...args, '(info)'].join(' ')}\n`)
+    fs.appendFileSync(
+      LOG_FILE_PATH,
+      `${[prefix, ...args, '(info)'].join(' ')}\n`
+    )
   },
-  success (...args) {
+  success(...args) {
     const prefix = this.prefix()
     console.log(chalk.greenBright(prefix), ...args)
-    fs.appendFileSync(LOG_FILE_PATH, `${[prefix, ...args, '(success)'].join(' ')}\n`)
+    fs.appendFileSync(
+      LOG_FILE_PATH,
+      `${[prefix, ...args, '(success)'].join(' ')}\n`
+    )
   },
-  async screenshot (page, type, fullPage = false) {
-    const filename = `${type}-${new Date().getTime()}.png`.replace(/<|>|:|"|\/|\\|\||\?|\*/g, '-')
+  async screenshot(page, type, fullPage = false) {
+    const filename = `${type}-${new Date().getTime()}.png`.replace(
+      /<|>|:|"|\/|\\|\||\?|\*/g,
+      '-'
+    )
     const savePath = path.resolve(SCREENSHOT_PATH, filename)
     try {
       const result = await page.screenshot({ fullPage, path: savePath })
