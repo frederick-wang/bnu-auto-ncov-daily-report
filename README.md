@@ -14,7 +14,19 @@
 
 ## 使用说明
 
-### 服务器部署
+### Github Actions（推荐）
+
+1. Fork 本仓库。
+2. 进入仓库的 Settings 页面，在左侧的菜单中选择 Secrets，点击「New repository secret」按钮，新建 3 个 Actions secrets：
+  - **USERNAME**：填写学号
+  - **PASSWORD**：填写密码
+  - **MAIL**：填写邮件配置（如果需要），内容同「命令行参数说明」一节中的 `--mail` 参数，为一个 JSON 字符串。
+
+之后，就会在北京时间每天 00:05 自动打卡了（Github Actions 可能有一定的延迟），如果配置了邮件提醒，还会自动发送邮件到你的邮箱。
+
+如果希望在其他时间打卡，可以在 `.github/workflows/bot.yml` 中，修改 `cron` 为你需要的时间。
+
+### 个人服务器部署
 
 首先，保证之前至少已经完成过一次手动打卡。
 
