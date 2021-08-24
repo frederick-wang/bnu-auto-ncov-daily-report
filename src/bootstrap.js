@@ -1,61 +1,53 @@
 const { Logger } = require('./logger')
 const { MAX_ATTEMPTS, ATTEMPTS_INTERVAL, REPORT_PAGE_URL } = require('../env')
-const { handleProgramError, handleResultError } = require('./handler')
-const { getConfirmResult, login } = require('./util')
-const { startPPTR, loadLoginPage, loadIndexPage, submitReportData } = require('./procedure.js')
+const { handleProgramError } = require('./handler')
+const {
+  startPPTR,
+  loadLoginPage,
+  userLogin,
+  loadIndexPage,
+  confirmReportData,
+  submitReportData
+} = require('./procedure')
 
 const bootstrap = async (config) => {
+  /**
+   * 当前超时重试次数
+   */
   let currentAttempts = 0
-  const { page, browser } = await startPPTR()
+  // 初始化 Puppeteer
+  const { browser, page } = await startPPTR()
+  const bpc = [browser, page, config]
   try {
+    // 访问打卡应用网址
     await page.goto(REPORT_PAGE_URL)
-
     // 加载登录页
     const { type: loginPageType } = await loadLoginPage(page)
-
     // 用户登录
-    const loginResult = await login(page, config.username, config.password, loginPageType)
-    if (loginResult.error) {
-      await handleResultError(browser, page, config,
-        { result: '登录失败', type: 'LoginError', message: loginResult.message }
-      )
-      return
-    }
-    Logger.success('登录成功！')
-
+    if (!await userLogin(...bpc, loginPageType)) return
     // 加载打卡页
     await loadIndexPage(page)
-
     // 数据校验
-    const confirmResult = await getConfirmResult(page)
-    if (confirmResult.error) {
-      await handleResultError(browser, page, config,
-        { result: '数据校验失败', type: 'ConfirmError', message: confirmResult.message }
-      )
+    if (!await confirmReportData(...bpc)) return
+    // 提交打卡数据
+    await submitReportData(...bpc)
+
+  } catch (error) {
+    // TimeoutError 是 Puppeteer 的 wait 操作超时的错误名称
+    if (error.name !== 'TimeoutError') {
+      await handleProgramError(...bpc, { result: '发生运行错误', type: 'RuntimeError', error })
       return
     }
-    Logger.success('数据校验成功！提示信息为: ')
-    Logger.info(`「${confirmResult.message}」`)
 
-    // 提交打卡数据
-    await submitReportData(browser, page, config)
-  } catch (error) {
-    if (error.name === 'TimeoutError') {
-      if (currentAttempts < MAX_ATTEMPTS) {
-        currentAttempts++
-        Logger.warn(`操作超时，稍后将重试第 ${currentAttempts} 次……`)
-        await page.waitForTimeout(ATTEMPTS_INTERVAL)
-        bootstrap()
-      } else {
-        await handleProgramError(browser, page, config,
-          { result: '操作超时，且已达最大重试次数', type: 'TimeoutError', error }
-        )
-      }
-    } else {
-      await handleProgramError(browser, page, config,
-        { result: '发生运行错误', type: 'RuntimeError', error }
-      )
+    if (currentAttempts >= MAX_ATTEMPTS) {
+      await handleProgramError(...bpc, { result: '操作超时，且已达最大重试次数', type: 'TimeoutError', error })
+      return
     }
+
+    currentAttempts++
+    Logger.warn(`操作超时，稍后将重试第 ${currentAttempts} 次……`)
+    await page.waitForTimeout(ATTEMPTS_INTERVAL)
+    await bootstrap()
   }
 }
 
