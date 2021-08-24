@@ -1,5 +1,11 @@
 {
   "username": "用户名",
   "password": "密码",
-  "mail": null
+  "mail": 是否开启邮件通知功能，true 为开启，false 为不开启,
+  "mail_host": "SMTP 服务器",
+  "mail_port": SMTP 服务器端口，填数字,
+  "mail_secure": SMTP 服务器端口是否加密，true 为加密，false 为不加密,
+  "mail_user": "SMTP 服务器登录用户名",
+  "mail_pass": "SMTP 服务器登录密码",
+  "mail_to": "邮件通知的收件人邮箱"
 }

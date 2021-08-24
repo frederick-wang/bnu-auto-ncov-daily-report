@@ -20,7 +20,13 @@
 2. 进入仓库的 Settings 页面，在左侧的菜单中选择 Secrets，点击「New repository secret」按钮，新建 3 个 Actions secrets：
   - **USERNAME**：填写学号
   - **PASSWORD**：填写密码
-  - **MAIL**：填写邮件配置（如果需要），内容同「命令行参数说明」一节中的 `--mail` 参数，为一个 JSON 字符串。
+  - **MAIL**：是否开启邮件通知功能，`true` 为开启，`false` 为不开启。
+  - **MAIL_HOST**：SMTP 服务器
+  - **MAIL_PORT**：SMTP 服务器端口，填数字
+  - **MAIL_SECURE**：SMTP 服务器端口是否加密，`true` 为加密，`false` 为不加密
+  - **MAIL_USER**：SMTP 服务器登录用户名
+  - **MAIL_PASS**：SMTP 服务器登录密码
+  - **MAIL_TO**：邮件通知的收件人邮箱
 
 之后，就会在北京时间每天 00:05 自动打卡了（Github Actions 可能有一定的延迟），如果配置了邮件提醒，还会自动发送邮件到你的邮箱。
 
@@ -33,7 +39,7 @@
 如果使用配置文件方式输入参数，则需要：
 
 1. 将 `config.sample.json` 复制一份并命名为 `config.json`。
-2. 填写 `config.json` 的属性 `username` 和 `password`。如果需要如果需要开启邮件提醒功能，则还需按照「配置文件说明」一节填写 `mail` 属性。
+2. 填写 `config.json` 的属性 `username` 和 `password`。如果需要如果需要开启邮件提醒功能，则还需按照「配置文件说明」一节填写 `mail` 等属性。
 3. 在服务器上用任意方式创建定时任务，用 `node` 执行 `app.js`。
 
 如果使用命令行方式输入参数，则需要：
@@ -48,23 +54,29 @@
 Usage: node app [options]
 
 Options:
-  -V, --version              output the version number
-  -u, --username <username>  数字京师用户名
-  -p, --password <password>  数字京师密码
-  -m, --mail [options]       邮件配置对象
-  -h, --help                 display help for command
+  -V, --version                    output the version number
+  -u, --username <username>        数字京师用户名
+  -p, --password <password>        数字京师密码
+  -m, --mail                       是否开启邮件通知功能
+  -h, --mail_host <host>           SMTP 服务器
+  -o, --mail_port <port>           SMTP 服务器端口
+  -s, --mail_secure                SMTP 服务器端口是否加密
+  -U, --mail_user <mail_uesrname>  SMTP 服务器登录用户名
+  -P, --mail_pass <mail_password>  SMTP 服务器登录密码
+  -t, --mail_to <receiver>         邮件通知的收件人邮箱
+  --help                           display help for command
 ```
 
-其中，`--mail` 参数默认为空，如果不需要开启邮件提醒功能，不使用该参数即可，如：
+其中，`--mail` 参数默认为 `false`，如果不需要开启邮件提醒功能，不使用该参数即可，如：
 
 ```bash
-node app -u 用户名 -p 密码
+node app -u 数字京师用户名 -p 数字京师密码
 ```
 
 如果需要开启邮件提醒功能，需要设置 SMTP 服务器与邮件模板信息。`--mail` 参数为一个 JSON 字符串，调用示例如下: 
 
 ```bash
-node app -u 用户名 -p 密码 -m '{"transport": {"host": "这里填入 SMTP 服务器，比如可以用 QQ 的SMTP服务器","port": 465,"secure": true,"auth": {"user": "邮箱名","pass": "密码"}},"info": {"from": "北师大打卡助手 <邮箱名>","to": "输入接收通知邮件的邮箱","subject": "[北师大打卡助手] \${date} 自动打卡记录","html": "<p>学号为 \${username} 的用户：</p><p>您的今日打卡结果为：<strong>\${result}</strong>。</p><p>系统提示为：「\${message}」。</p><p>打卡时间为：\${date} \${time}。</p><br><p>北师大打卡助手</p><p>Powered by Zhaoji Wang</p>"}}'
+node app -u 数字京师用户名 -p 数字京师密码 -m -h SMTP服务器 -o SMTP服务器端口 -s -U SMTP服务器登录用户名 -P SMTP服务器登录密码 -t 邮件通知的收件人邮箱
 ```
 
 ## 配置文件说明
@@ -77,28 +89,20 @@ node app -u 用户名 -p 密码 -m '{"transport": {"host": "这里填入 SMTP �
 
 ### mail （非必填）
 
-如果不需要开启邮件提醒功能，保持 `mail` 属性为 `null` 即可。
+如果不需要开启邮件提醒功能，保持 `mail` 属性为 `false` 即可。
 
-如果需要开启邮件提醒功能，需要设置 SMTP 服务器与邮件模板信息。示例如下: 
+如果需要开启邮件提醒功能，需要设置 SMTP 服务器与收件邮箱信息。示例如下: 
 
 ```json
 {
-  "mail": {
-    "transport": {
-      "host": "这里填入 SMTP 服务器，比如可以用 QQ 的SMTP服务器",
-      "port": 465,
-      "secure": true,
-      "auth": {
-        "user": "邮箱名",
-        "pass": "密码"
-      }
-    },
-    "info": {
-      "from": "北师大打卡助手 <邮箱名>",
-      "to": "输入接收通知邮件的邮箱",
-      "subject": "[北师大打卡助手] ${date} 自动打卡记录",
-      "html": "<p>学号为 ${username} 的用户：</p><p>您的今日打卡结果为：<strong>${result}</strong>。</p><p>系统提示为：「${message}」。</p><p>打卡时间为：${date} ${time}。</p><br><p>北师大打卡助手</p><p>Powered by Zhaoji Wang</p>"
-    }
-  }
+  "username": "填入学号",
+  "password": "填入数字京师的密码",
+  "mail": true,
+  "mail_host": "SMTP 服务器",
+  "mail_port": SMTP 服务器端口，填数字,
+  "mail_secure": SMTP 服务器端口是否加密，true 为加密，false 为不加密,
+  "mail_user": "SMTP 服务器登录用户名",
+  "mail_pass": "SMTP 服务器登录密码",
+  "mail_to": "邮件通知的收件人邮箱"
 }
 ```

@@ -1,7 +1,8 @@
 const fs = require('fs-extra')
 const { Logger } = require('./logger')
-const { CONFIG_FILE_PATH } = require('../env')
+const { CONFIG_FILE_PATH, MAIL_TEMPLATE_PATH } = require('../env')
 const { options } = require('./commander')
+const mailTemplate = require(MAIL_TEMPLATE_PATH)
 
 /**
  * 从命令行加载参数
@@ -9,22 +10,27 @@ const { options } = require('./commander')
  * @returns {{ username: string; password: string; mail: Object|null; }}
  */
 const getConfigFromCommandLine = () => {
-  const { username, password } = options
-  try {
-    const mail = options.mail
-      ? Object.prototype.toString.call(options.mail) === '[object String]'
-        ? JSON.parse(options.mail)
-        : null
-      : null
-    return { username, password, mail }
-  } catch (error) {
-    Logger.log(`--mail 的值为：`)
-    Logger.log(options.mail)
-    Logger.log(`解析 --mail 时的报错信息为：`)
-    Logger.error(error)
-    const e = new Error('命令行参数 --mail 的值无法解析！')
-    e.name = 'ConfigError'
-    throw e
+  const {
+    username,
+    password,
+    mail,
+    mail_host,
+    mail_port,
+    mail_secure,
+    mail_user,
+    mail_pass,
+    mail_to
+  } = options
+  return {
+    username,
+    password,
+    mail: mail === 'true',
+    mail_host,
+    mail_port: Number(mail_port),
+    mail_secure: mail_secure === 'true',
+    mail_user,
+    mail_pass,
+    mail_to
   }
 }
 
@@ -37,17 +43,28 @@ const getConfigFromFile = () => {
   if (!fs.existsSync(CONFIG_FILE_PATH)) return {}
 
   const config = require(CONFIG_FILE_PATH)
-  const { username, password } = config
-  let mail = null
-  if (config) {
-    if (Object.prototype.toString.call(config.mail) !== '[object Object]') {
-      const e = new Error('配置文件中 mail 的值无法解析！')
-      e.name = 'ConfigError'
-      throw e
-    }
-    mail = config.mail
+  const {
+    username,
+    password,
+    mail,
+    mail_host,
+    mail_port,
+    mail_secure,
+    mail_user,
+    mail_pass,
+    mail_to
+  } = config
+  return {
+    username,
+    password,
+    mail,
+    mail_host,
+    mail_port,
+    mail_secure,
+    mail_user,
+    mail_pass,
+    mail_to
   }
-  return { username, password, mail }
 }
 
 const checkLoginInfo = (username, password) => {
@@ -87,13 +104,40 @@ const loadConfig = () => {
   const configFile = getConfigFromFile()
   const username = configCMD.username || configFile.username || null
   const password = configCMD.password || configFile.password || null
-  const mail = configCMD.mail || configFile.mail || null
-
   checkLoginInfo(username, password)
-  checkMailConfig(mail)
+
+  const mail = configCMD.mail || configFile.mail || false
+  const mail_host = configCMD.mail_host || configFile.mail_host || null
+  const mail_port = configCMD.mail_port || configFile.mail_port || null
+  const mail_secure = configCMD.mail_secure || configFile.mail_secure || null
+  const mail_user = configCMD.mail_user || configFile.mail_user || null
+  const mail_pass = configCMD.mail_pass || configFile.mail_pass || null
+  const mail_to = configCMD.mail_to || configFile.mail_to || null
+  let mailConfig = null
+  if (mail) {
+    const { subject, html } = mailTemplate
+    mailConfig = {
+      transport: {
+        host: mail_host,
+        port: mail_port,
+        secure: mail_secure,
+        auth: {
+          user: mail_user,
+          pass: mail_pass
+        }
+      },
+      info: {
+        from: `北师大打卡助手 <${mail_user}>`,
+        to: mail_to,
+        subject,
+        html
+      }
+    }
+    checkMailConfig(mailConfig)
+  }
 
   Logger.success('配置文件加载成功！')
-  return { username, password, mail }
+  return { username, password, mail: mailConfig }
 }
 
 exports.loadConfig = loadConfig

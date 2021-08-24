@@ -1,0 +1,4 @@
+{
+  "subject": "[北师大打卡助手] ${date} 自动打卡记录",
+  "html": "<p>学号为 ${username} 的用户：</p><p>您的今日打卡结果为：<strong>${result}</strong>。</p><p>系统提示为：「${message}」。</p><p>打卡时间为：${date} ${time}。</p><br><p>北师大打卡助手</p><p>Powered by Zhaoji Wang</p>"
+}
