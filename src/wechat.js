@@ -9,11 +9,23 @@ const sendWechatMessage = async (payload, sendKey, params) => {
       Object.entries(payload).map(([k, v]) => [k, replaceInfoParams(v, params)])
     )
   ).toString()
-  const res = await got.post(url, { body: data }).json()
+  console.log(url)
+  console.log(data)
+  const test = await got.post(url, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    },
+    body: data,
+    responseType: 'json'
+  })
+  console.log(test)
+  const res = test.body
   if (res.code || res.data.errno) {
     throw new Error(`微信通知消息加入推送队列失败：${JSON.stringify(res)}`)
   }
-  Logger.log(`微信通知消息已加入推送队列，pushid: ${res.data.pushid}，readkey: ${res.data.readkey}`)
+  Logger.log(
+    `微信通知消息已加入推送队列，pushid: ${res.data.pushid}，readkey: ${res.data.readkey}`
+  )
 }
 
 const send = async (config, result, message) => {
