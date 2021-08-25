@@ -1,4 +1,4 @@
 {
-  "title": "[${result}] ${date} 自动打卡记录（北师大打卡助手）",
+  "title": "[${result}] ${date} 打卡记录 (BNU打卡助手)",
   "desp": "打卡结果：**${result}**。\n\n系统提示：「${message}」。\n\n打卡时间：${date} ${time}。\n\n打卡学号：${username}。\n\n北师大打卡助手\n\nPowered by Frederick Wang"
 }
