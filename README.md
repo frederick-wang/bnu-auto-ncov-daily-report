@@ -12,6 +12,8 @@
 2. 进入仓库的 Settings 页面，在左侧的菜单中选择 Secrets，点击「New repository secret」按钮，新建下面这些 Secrets（冒号前的是 Secret Name，冒号后的是要填的内容）：
   - **USERNAME**: 填写学号（必须设置）
   - **PASSWORD**: 填写数字京师密码（必须设置）
+  - **WECHAT**: 是否开启微信通知功能，`true` 为开启，`false` 为不开启（如果不开启，也可以直接不设置）
+  - **WECHAT_SENDKEY**: 「Server酱」微信消息推送服务的 SendKey（只在开启微信通知功能时需要设置）
   - **MAIL**: 是否开启邮件通知功能，`true` 为开启，`false` 为不开启（如果不开启，也可以直接不设置）
   - **MAIL_HOST**: SMTP 服务器（只在开启邮件通知功能时需要设置）
   - **MAIL_PORT**: SMTP 服务器端口，填数字（只在开启邮件通知功能时需要设置）
@@ -19,17 +21,40 @@
   - **MAIL_USER**: SMTP 服务器登录用户名（只在开启邮件通知功能时需要设置）
   - **MAIL_PASS**: SMTP 服务器登录密码（只在开启邮件通知功能时需要设置）
   - **MAIL_TO**: 邮件通知的收件人邮箱（只在开启邮件通知功能时需要设置）
-  - **WECHAT**: 是否开启微信通知功能，`true` 为开启，`false` 为不开启（如果不开启，也可以直接不设置）
-  - **WECHAT_SENDKEY**: 「Server酱」微信消息推送服务的 SendKey（只在开启微信通知功能时需要设置）
 3. 进入仓库的 Actions 界面，开启 Workflows，然后选择 `Report Bot` workflow，enable workflow
 
-之后，就会在北京时间每天 00:05 自动打卡了（Github Actions 可能有 15 分钟以内的延迟），如果配置了邮件通知，还会自动发送邮件到你的邮箱（如下图）。
+配置好 Secrets 并启用 workflow 后，推荐先手动运行一次该 workflow，看看运行是否正常，能不能收到通知等。（如下图）
 
-![image](https://user-images.githubusercontent.com/6050869/130831490-d90630c6-3d18-4c8b-b228-18a8b542556d.png)
+![image](https://user-images.githubusercontent.com/6050869/130862690-66862b5f-8bf8-4568-b907-34431f6eabae.png)
+
+如果配置成功的话，该 workflow 就会在北京时间每天 00:05 自动执行，完成打卡了（Github Actions 可能有最长 15 分钟左右的延迟，最晚会在 00:20 左右自动执行）。
+
+注：邮件通知功能与微信通知功能可以同时开启，也可以只开启其中一个，也可以都不开启。
 
 #### 自定义打卡时间
 
 如果希望在其他时间打卡，可以在 `.github/workflows/bot.yml` 中，修改 `cron` 为你需要的时间。
+
+#### 开启微信通知功能
+
+本程序的微信通知功能依赖于「Server酱」微信消息推送服务。如果希望使用，需要前往「Server酱」网站（[https://sct.ftqq.com/](https://sct.ftqq.com/)）注册一个账号，并获取 `SendKey`。
+
+第一步，进入「Server酱」网站，点击右上角「登入」，然后使用微信扫码，将自动注册账号并登录。
+
+![image](https://user-images.githubusercontent.com/6050869/130860816-2e2842d2-72c9-4a1c-a88e-d5296e27bd76.png)
+
+第二步，在 SendKey 页面中，点击「复制」按钮，复制 `SendKey`。
+
+![image](https://user-images.githubusercontent.com/6050869/130861195-76abfc41-4131-4a15-bc25-79cdfcfa2fd7.png)
+
+也可以先点击那个闭着的眼睛按钮，显示 `SendKey`，之后手动复制。
+
+![image](https://user-images.githubusercontent.com/6050869/130861541-8e5b9831-2337-4ee4-a5cf-62659d4afcb4.png)
+
+然后，在设置好 `USERNAME` 与 `PASSWORD` 之后，额外设置下列 Secrets：
+
+  - **WECHAT**: true
+  - **WECHAT_SENDKEY**: 把刚才复制的「Server酱」微信消息推送服务的 SendKey 粘贴到这里
 
 #### 开启邮件通知功能（以 QQ 邮箱为例）
 
@@ -46,7 +71,7 @@
 
 ![image](https://user-images.githubusercontent.com/6050869/130831217-e6978a23-e6af-4825-8269-1e0e308a145a.png)
 
-然后在设置好 `USERNAME` 与 `PASSWORD` 之后，额外设置下列 Secrets：
+然后，在设置好 `USERNAME` 与 `PASSWORD` 之后，额外设置下列 Secrets：
 
   - **MAIL**: true
   - **MAIL_HOST**: smtp.qq.com
@@ -56,16 +81,9 @@
   - **MAIL_PASS**: 在第三步中生成的授权码
   - **MAIL_TO**: 你需要接收通知的邮箱，可以继续填自己的 QQ 邮箱
 
-#### 开启微信通知功能
+配置好邮件通知后，每天打卡完毕将自动发送邮件到你的邮箱（如下图）。
 
-本程序的微信通知功能依赖于「Server酱」微信消息推送服务。如果希望使用，需要前往「Server酱」的网站（[https://sct.ftqq.com/](https://sct.ftqq.com/)）注册一个账号，并获取 `SendKey`。
-
-然后在设置好 `USERNAME` 与 `PASSWORD` 之后，额外设置下列 Secrets：
-
-  - **WECHAT**: true
-  - **WECHAT_SENDKEY**: 「Server酱」微信消息推送服务的 SendKey
-
-注：邮件通知功能与微信通知功能可以同时开启，也可以只开启其中一个，也可以都不开启。
+![image](https://user-images.githubusercontent.com/6050869/130831490-d90630c6-3d18-4c8b-b228-18a8b542556d.png)
 
 ### 个人服务器部署
 
