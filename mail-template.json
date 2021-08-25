@@ -1,4 +1,4 @@
 {
-  "subject": "[北师大打卡助手] ${date} 自动打卡记录",
+  "subject": "[${result}] ${date} 自动打卡记录（北师大打卡助手）",
   "html": "<p>打卡结果：<strong>${result}</strong>。</p><p>系统提示：「${message}」。</p><p>打卡时间：${date} ${time}。</p><p>打卡学号：${username}。</p><br><p>北师大打卡助手</p><p>Powered by Frederick Wang</p>"
 }
