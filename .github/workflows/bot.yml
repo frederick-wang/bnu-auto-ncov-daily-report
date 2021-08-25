@@ -37,4 +37,4 @@ jobs:
         MAIL_TO: ${{ secrets.MAIL_TO }}
         WECHAT: ${{ secrets.WECHAT }}
         WECHAT_SENDKEY: ${{ secrets.WECHAT_SENDKEY }}
-      run: npm start -- -u "$USERNAME" -p "$PASSWORD" -m "$MAIL" -h "$MAIL_HOST" -o "$MAIL_PORT" -s "$MAIL_SECURE" -U "$MAIL_USER" -P "$MAIL_PASS" -t "$MAIL_TO" -w "$WECHAT" -k "WECHAT_SENDKEY"
+      run: npm start -- -u "$USERNAME" -p "$PASSWORD" -m "$MAIL" -h "$MAIL_HOST" -o "$MAIL_PORT" -s "$MAIL_SECURE" -U "$MAIL_USER" -P "$MAIL_PASS" -t "$MAIL_TO" -w "$WECHAT" -k "$WECHAT_SENDKEY"
