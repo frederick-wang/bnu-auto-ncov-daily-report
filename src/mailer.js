@@ -1,15 +1,6 @@
 const nodemailer = require('nodemailer')
 const { Logger } = require('./logger')
-const { getBeijingTime } = require('./util')
-
-const replaceInfoParams = (str, params) => {
-  let result = str
-  for (const [k, v] of Object.entries(params)) {
-    const r = new RegExp(`\\$\{${k}}`, 'g')
-    result = String(result).replace(r, v)
-  }
-  return result
-}
+const { getBeijingTime, replaceInfoParams } = require('./util')
 
 const sendMail = async (mailInfo, transportConfig, params) => {
   const transporter = nodemailer.createTransport(transportConfig)
@@ -37,5 +28,4 @@ const send = async (config, result, message) => {
   }
 }
 
-exports.sendMail = sendMail
 exports.send = send

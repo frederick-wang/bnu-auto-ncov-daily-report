@@ -14,6 +14,8 @@ program
   .option('-U, --mail_user <mail_uesrname>', 'SMTP 服务器登录用户名')
   .option('-P, --mail_pass <mail_password>', 'SMTP 服务器登录密码')
   .option('-t, --mail_to <receiver>', '邮件通知的收件人邮箱')
+  .option('-w, --wechat <boolean>', '是否开启微信通知功能（依赖「Server酱」微信消息推送服务）')
+  .option('-k, --wechat_sendkey <sendkey>', '「Server酱」微信消息推送服务的 SendKey')
 program.parse(process.argv)
 
 exports.options = program.opts()

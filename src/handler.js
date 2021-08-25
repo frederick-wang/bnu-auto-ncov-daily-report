@@ -1,5 +1,6 @@
 const { Logger } = require('./logger')
-const { send } = require('./mail')
+const mailer = require('./mailer')
+const wechat = require('./wechat')
 
 const exit = async (browser) => {
   Logger.info('程序执行完毕，退出！')
@@ -17,7 +18,8 @@ const exit = async (browser) => {
  */
 const handleError = async (browser, page, config, params) => {
   await Logger.screenshot(page, params.type)
-  await send(config, params.result, params.message)
+  await mailer.send(config, params.result, params.message)
+  await wechat.send(config, params.result, params.message)
   await exit(browser)
 }
 
@@ -76,7 +78,8 @@ const handleSuccess = async (browser, page, config, params) => {
   Logger.success(`${params.result}！提示信息为: `)
   Logger.info(`「${params.message}」`)
   await Logger.screenshot(page, params.type)
-  await send(config, params.result, params.message)
+  await mailer.send(config, params.result, params.message)
+  await wechat.send(config, params.result, params.message)
   await exit(browser)
 }
 

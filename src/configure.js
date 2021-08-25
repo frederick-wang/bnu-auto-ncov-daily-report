@@ -1,8 +1,13 @@
 const fs = require('fs-extra')
 const { Logger } = require('./logger')
-const { CONFIG_FILE_PATH, MAIL_TEMPLATE_PATH } = require('../env')
+const {
+  CONFIG_FILE_PATH,
+  MAIL_TEMPLATE_PATH,
+  WECHAT_TEMPLATE_PATH
+} = require('../env')
 const { options } = require('./commander')
 const mailTemplate = require(MAIL_TEMPLATE_PATH)
+const wechatTemplate = require(WECHAT_TEMPLATE_PATH)
 
 /**
  * 从命令行加载参数
@@ -19,7 +24,9 @@ const getConfigFromCommandLine = () => {
     mail_secure,
     mail_user,
     mail_pass,
-    mail_to
+    mail_to,
+    wechat,
+    wechat_sendkey
   } = options
   return {
     username,
@@ -30,7 +37,9 @@ const getConfigFromCommandLine = () => {
     mail_secure: mail_secure === 'true',
     mail_user,
     mail_pass,
-    mail_to
+    mail_to,
+    wechat: wechat === 'true',
+    wechat_sendkey
   }
 }
 
@@ -52,7 +61,9 @@ const getConfigFromFile = () => {
     mail_secure,
     mail_user,
     mail_pass,
-    mail_to
+    mail_to,
+    wechat,
+    wechat_sendkey
   } = config
   return {
     username,
@@ -63,7 +74,9 @@ const getConfigFromFile = () => {
     mail_secure,
     mail_user,
     mail_pass,
-    mail_to
+    mail_to,
+    wechat,
+    wechat_sendkey
   }
 }
 
@@ -96,6 +109,28 @@ const checkMailConfig = (mailConfig) => {
   const { from, to, subject, html } = mailConfig.info
   if (!from || !to || !subject || !html) {
     throw infoError
+  }
+}
+
+const checkWechatConfig = (wechatConfig) => {
+  if (!wechatConfig) return
+
+  const sendKeyError = new Error(
+    '加载「Server酱」微信消息推送服务 SendKey 失败！'
+  )
+  sendKeyError.name = 'ConfigError'
+  if (!wechatConfig.sendKey) {
+    throw sendKeyError
+  }
+
+  const payloadError = new Error('加载微信消息模板失败！')
+  payloadError.name = 'ConfigError'
+  if (!wechatConfig.payload) {
+    throw payloadError
+  }
+  const { title, desp } = wechatConfig.payload
+  if (!title || !desp) {
+    throw payloadError
   }
 }
 
@@ -136,8 +171,21 @@ const loadConfig = () => {
     checkMailConfig(mailConfig)
   }
 
+  const wechat = configCMD.wechat || configFile.wechat || false
+  const wechat_sendkey =
+    configCMD.wechat_sendkey || configFile.wechat_sendkey || null
+  let wechatConfig = null
+  if (wechat) {
+    const { title, desp } = wechatTemplate
+    wechatConfig = {
+      payload: { title, desp },
+      sendKey: wechat_sendkey
+    }
+    checkWechatConfig(wechatConfig)
+  }
+
   Logger.success('配置文件加载成功！')
-  return { username, password, mail: mailConfig }
+  return { username, password, mail: mailConfig, wechat: wechatConfig }
 }
 
 exports.loadConfig = loadConfig

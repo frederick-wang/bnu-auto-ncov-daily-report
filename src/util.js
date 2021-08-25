@@ -259,9 +259,19 @@ const save = async (page) => {
   return await getSaveResult(page)
 }
 
+const replaceInfoParams = (str, params) => {
+  let result = str
+  for (const [k, v] of Object.entries(params)) {
+    const r = new RegExp(`\\$\{${k}}`, 'g')
+    result = String(result).replace(r, v)
+  }
+  return result
+}
+
 exports.getConfirmResult = getConfirmResult
 exports.login = login
 exports.save = save
 exports.waitForLoginPage = waitForLoginPage
 exports.waitForIndexPage = waitForIndexPage
 exports.getBeijingTime = getBeijingTime
+exports.replaceInfoParams = replaceInfoParams
