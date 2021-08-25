@@ -9,17 +9,15 @@ const sendWechatMessage = async (payload, sendKey, params) => {
       Object.entries(payload).map(([k, v]) => [k, replaceInfoParams(v, params)])
     )
   ).toString()
-  console.log(url)
-  console.log(data)
-  const test = await got.post(url, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-    },
-    body: data,
-    responseType: 'json'
-  })
-  console.log(test)
-  const res = test.body
+  const res = await got
+    .post(url, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      body: data,
+      responseType: 'json'
+    })
+    .json()
   if (res.code || res.data.errno) {
     throw new Error(`微信通知消息加入推送队列失败：${JSON.stringify(res)}`)
   }
