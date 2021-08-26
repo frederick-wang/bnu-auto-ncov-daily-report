@@ -70,7 +70,9 @@
 
 ![image](https://user-images.githubusercontent.com/6050869/130994136-5439832e-e476-405b-8fcd-2ae82cc7a2d0.png)
 
-配置好微信通知后，每天打卡完毕将自动发送通知消息到你的微信。
+配置好微信通知后，每天打卡完毕将自动发送通知消息到你的微信（如下图）。
+
+![image](https://user-images.githubusercontent.com/6050869/130998934-9998d14b-b542-4f84-abf1-af0ef0e3b3b1.png)
 
 #### 开启邮件通知功能（以 QQ 邮箱为例）
 
@@ -102,7 +104,9 @@
 
 ![image](https://user-images.githubusercontent.com/6050869/130994865-0b0b7c0c-81ea-4e4b-8794-e9528cbd05fa.png)
 
-配置好邮件通知后，每天打卡完毕将自动发送邮件到你的邮箱。
+配置好邮件通知后，每天打卡完毕将自动发送邮件到你的邮箱（如下图）。
+
+![image](https://user-images.githubusercontent.com/6050869/130998859-69d9c10e-7a33-4b10-99aa-ec4d7a3e4512.png)
 
 ### 个人服务器部署
 
