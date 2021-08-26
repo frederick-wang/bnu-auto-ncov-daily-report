@@ -66,7 +66,11 @@
   - **WECHAT**: true
   - **WECHAT_SENDKEY**: 把刚才复制的「Server酱」微信消息推送服务的 SendKey 粘贴到这里
 
-配置好邮件通知后，每天打卡完毕将自动发送通知消息到你的微信。
+配置好后，应该一共有如下图所示的 4 个 Secrets：
+
+![image](https://user-images.githubusercontent.com/6050869/130994136-5439832e-e476-405b-8fcd-2ae82cc7a2d0.png)
+
+之后，每天打卡完毕将自动发送通知消息到你的微信。
 
 #### 开启邮件通知功能（以 QQ 邮箱为例）
 
