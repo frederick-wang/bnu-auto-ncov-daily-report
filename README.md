@@ -66,17 +66,18 @@
   - **WECHAT**: true
   - **WECHAT_SENDKEY**: 把刚才复制的「Server酱」微信消息推送服务的 SendKey 粘贴到这里
 
-配置好后，应该一共有如下图所示的 4 个 Secrets：
+设置好后，应该一共有如下图所示的 4 个 Secrets：
 
 ![image](https://user-images.githubusercontent.com/6050869/130994136-5439832e-e476-405b-8fcd-2ae82cc7a2d0.png)
 
-之后，每天打卡完毕将自动发送通知消息到你的微信。
+配置好微信通知后，每天打卡完毕将自动发送通知消息到你的微信。
 
 #### 开启邮件通知功能（以 QQ 邮箱为例）
 
 国内最常见的邮箱服务是 QQ 邮箱，下面以 QQ 邮箱为例，说明如何配置邮件通知。
 
 第一步，进入 QQ 邮箱，点「设置」，切换到「账户」选项卡（如下图）。
+
 ![image](https://user-images.githubusercontent.com/6050869/130831671-ca586492-064e-42b9-8daa-8edf6f8f23a6.png)
 
 第二步，滚动页面到「POP3/IMAP/SMTP/Exchange/CardDAV/CalDAV服务」一节，确认 SMTP 服务已开启，如果没有开启，手动打开。
@@ -96,6 +97,10 @@
   - **MAIL_USER**: QQ 邮箱的完整邮件地址
   - **MAIL_PASS**: 在第三步中生成的授权码
   - **MAIL_TO**: 你需要接收通知的邮箱，可以继续填自己的 QQ 邮箱
+
+设置好后，Secrets 界面应该如下图所示：
+
+![image](https://user-images.githubusercontent.com/6050869/130994865-0b0b7c0c-81ea-4e4b-8794-e9528cbd05fa.png)
 
 配置好邮件通知后，每天打卡完毕将自动发送邮件到你的邮箱。
 
