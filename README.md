@@ -72,7 +72,7 @@
 
 配置好微信通知后，每天打卡完毕将自动发送通知消息到你的微信（如下图）。
 
-![image](https://user-images.githubusercontent.com/6050869/130998934-9998d14b-b542-4f84-abf1-af0ef0e3b3b1.png)
+![image](https://user-images.githubusercontent.com/6050869/169222042-cc2b4307-0ba1-4234-ae10-4b0343692a73.png)
 
 #### 开启邮件通知功能（以 QQ 邮箱为例）
 
@@ -102,11 +102,12 @@
 
 设置好后，Secrets 界面应该如下图所示：
 
-![image](https://user-images.githubusercontent.com/6050869/130994865-0b0b7c0c-81ea-4e4b-8794-e9528cbd05fa.png)
+![image](https://user-images.githubusercontent.com/6050869/169221884-77706629-1387-406f-945c-aec76b67fd9e.png)
 
 配置好邮件通知后，每天打卡完毕将自动发送邮件到你的邮箱（如下图）。
 
-![image](https://user-images.githubusercontent.com/6050869/130998859-69d9c10e-7a33-4b10-99aa-ec4d7a3e4512.png)
+![image](https://user-images.githubusercontent.com/6050869/169222333-eddf8e48-6db7-4525-874d-6ae45e30df49.png)
+
 
 ### 个人服务器部署
 
