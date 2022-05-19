@@ -1,6 +1,6 @@
-# 北师大每日上报打卡助手
+# 某校 每日上报打卡助手
 
-本程序可以自动完成北师大的疫情防控每日健康状况上报打卡。只要之前至少打卡过一次，即可自动读取上一次打卡的数据完成打卡（地点为上一次打卡的地点）。
+本程序可以自动完成 某校 的疫情防控每日健康状况上报打卡。只要之前至少打卡过一次，即可自动读取上一次打卡的数据完成打卡（地点为上一次打卡的地点）。
 
 支持三种使用方式：
 
@@ -21,7 +21,7 @@
 1. Fork 本仓库。
 2. 进入仓库的 Settings 页面，在左侧的菜单中选择 Secrets，点击「New repository secret」按钮，新建下面这些 Secrets（冒号前的是 Secret Name，冒号后的是要填的内容）：
   - **USERNAME**: 填写学号（**必须设置**）
-  - **PASSWORD**: 填写数字京师密码（**必须设置**）
+  - **PASSWORD**: 填写统一身份认证平台密码（**必须设置**）
   - **WECHAT**: 是否开启微信通知功能，`true` 为开启，`false` 为不开启（**如果不开启，可以直接不设置。如果要开启，此网页往下滚动有配置这 2 个参数的教程**）
   - **WECHAT_SENDKEY**: 「Server酱」微信消息推送服务的 SendKey（只在开启微信通知功能时需要设置）
   - **MAIL**: 是否开启邮件通知功能，`true` 为开启，`false` 为不开启（**如果不开启，可以直接不设置。如果要开启，此网页往下滚动有配置这 7 个参数的教程**）
@@ -143,8 +143,8 @@ Usage: node app [options]
 
 Options:
   -V, --version                    output the version number
-  -u, --username <username>        数字京师用户名
-  -p, --password <password>        数字京师密码
+  -u, --username <username>        学号
+  -p, --password <password>        统一身份认证平台密码
   -m, --mail <boolean>             是否开启邮件通知功能
   -h, --mail_host <host>           SMTP 服务器
   -o, --mail_port <port>           SMTP 服务器端口
@@ -160,25 +160,25 @@ Options:
 其中，`--mail` 参数默认为 `false`，如果不需要开启邮件通知功能，不使用该参数即可，如：
 
 ```bash
-node app -u 数字京师用户名 -p 数字京师密码
+node app -u 学号 -p 统一身份认证平台密码
 ```
 
 如果需要开启邮件通知功能，需要设置 SMTP 服务器与邮件模板信息，以前文提到的 QQ 邮箱为例，调用示例如下: 
 
 ```bash
-node app -u 数字京师用户名 -p 数字京师密码 -m true -h smtp.qq.com -o 465 -s true -U QQ邮箱 -P QQ邮箱授权码 -t 邮件通知的收件人邮箱
+node app -u 学号 -p 统一身份认证平台密码 -m true -h smtp.qq.com -o 465 -s true -U QQ邮箱 -P QQ邮箱授权码 -t 邮件通知的收件人邮箱
 ```
 
 如果需要开启微信通知功能，由于本程序的微信通知功能依赖于[「Server酱」微信消息推送服务](https://sct.ftqq.com/)，需要首先去[「Server酱」微信消息推送服务](https://sct.ftqq.com/)的网站注册一个账号，注册后获取 `SendKey`。调用示例如下: 
 
 ```bash
-node app -u 数字京师用户名 -p 数字京师密码 -w true -k 「Server酱」的SendKey
+node app -u 学号 -p 统一身份认证平台密码 -w true -k 「Server酱」的SendKey
 ```
 
 邮件通知功能和微信通知功能可以同时开启，调用示例如下：
 
 ```bash
-node app -u 数字京师用户名 -p 数字京师密码 -m true -h smtp.qq.com -o 465 -s true -U QQ邮箱 -P QQ邮箱授权码 -t 邮件通知的收件人邮箱 -w true -k 「Server酱」的SendKey
+node app -u 学号 -p 统一身份认证平台密码 -m true -h smtp.qq.com -o 465 -s true -U QQ邮箱 -P QQ邮箱授权码 -t 邮件通知的收件人邮箱 -w true -k 「Server酱」的SendKey
 ```
 
 #### 配置文件说明
@@ -187,7 +187,7 @@ node app -u 数字京师用户名 -p 数字京师密码 -m true -h smtp.qq.com -
 填入学号。
 
 ##### password （必填）
-填入数字京师的密码。
+填入统一身份认证平台密码。
 
 ##### mail （非必填）
 
@@ -198,7 +198,7 @@ node app -u 数字京师用户名 -p 数字京师密码 -m true -h smtp.qq.com -
 ```json
 {
   "username": "填入学号",
-  "password": "填入数字京师的密码",
+  "password": "填入统一身份认证平台密码",
   "mail": true,
   "mail_host": "SMTP 服务器",
   "mail_port": SMTP 服务器端口，填数字,
@@ -220,7 +220,7 @@ node app -u 数字京师用户名 -p 数字京师密码 -m true -h smtp.qq.com -
 ```json
 {
   "username": "填入学号",
-  "password": "填入数字京师的密码",
+  "password": "填入统一身份认证平台密码",
   "wechat": true,
   "wechat_sendkay": "「Server酱」微信消息推送服务的 SendKey"
 }
